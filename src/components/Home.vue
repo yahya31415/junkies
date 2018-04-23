@@ -1,5 +1,5 @@
 <template>
-<div>    
+<div>
     <div class="section1">
         <div class="itemCard">
             <img class="itemImg" src="../assets/img/burger.jpg" alt="">
@@ -83,21 +83,20 @@
 </template>
 
 <script>
-import FoodItem from '../models/FoodItem'
-var item = new FoodItem()
-item.getItems()
-
-console.log(item.cost)
+import FoodItem from '../models/FoodItem';
 
 export default {
   name: 'Home',
-  data () {
+  data() {
     return {
       msg: 'Hello World'
-    }
+    };
+  },
+  mounted() {
+    var item = new FoodItem();
+    item.getItems(window.firebase.firestore).then(data => console.log(data));
   }
-
-}
+};
 </script>
 
 <style scoped>
@@ -167,7 +166,7 @@ export default {
 
 .section1::-webkit-scrollbar {
   height: 8px;
-  background-color: #F5F5F5;
+  background-color: #f5f5f5;
 }
 
 .heart:active {
@@ -182,7 +181,7 @@ export default {
   width: 70px;
   border-radius: 50%;
   margin-bottom: -35px;
-  background-color: #F5F5F5;
+  background-color: #f5f5f5;
 }
 
 .itemList {
@@ -207,6 +206,4 @@ export default {
   margin: 0;
   margin-bottom: 8px;
 }
-
 </style>
-
