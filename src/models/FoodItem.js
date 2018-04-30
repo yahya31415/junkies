@@ -50,6 +50,9 @@ export default class FoodItem {
   getItems(firestore: Object) {
     return firestore()
       .collection('FoodItems')
+      .orderBy("category")
+      .orderBy("subCategory")
+      .orderBy("isVeg")
       .get()
       .then(collectionSnapshot =>
         collectionSnapshot.docs.map(doc => doc.data())
