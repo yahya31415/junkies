@@ -66,47 +66,63 @@
         <div v-for="(cat, j) in category" :key="j">
           <h1 style="margin-bottom:0;">{{cat}}</h1>
           <div v-for="(subcat, i) in subCategory[cat]" :key="i">
-            <h2 style="margin: 8px 0">{{subcat}}</h2>
+            <h2 style="margin: 8px 0">{{subcat.subCategory}}</h2>
 
-            <h3 @click.native="myFunction(component.id)">Veg ></h3>
-            <div v-for="(item,m) in items" :key="m">
-              <div class="itemContainer" v-if="item.isVeg && item.subCategory === subcat">
-                 <img src="../assets/img/veg.png" alt="vegICon" width="18px" height="18px" style="position:absolute;display:inline-block;">
-               <div class="itemDetails">
+            <h3 v-if="subcat.veg" @click="changeView(subcat,'veg')">Veg ></h3>
+            <div v-if="subcat.showVeg">
+              <div v-for="(item,m) in items" :key="m">
+                <div class="itemContainer" v-if="item.isVeg && item.subCategory === subcat.subCategory">
+                  <img src="../assets/img/veg.png" alt="vegICon" width="18px" height="18px" style="position:absolute;display:inline-block;">
+                  <div class="itemDetails">
+                    <h4>{{item.name}}</h4>
+                    <h5>{{item.price}} &#8377;</h5>
+                    <p>{{item.description}}</p>
+                  </div>
+
+                  <div class="quantity">
+                    <div>
+                      <button class="itemQty">
+                        <b>{{item.qty}}</b>
+                      </button>
+                    </div>
+                    <button class="removeBtn" @click="removeFromCart(item)">
+                      <b>-</b>
+                    </button>
+
+                    <button class="addBtn" @click="addToCart(item)">
+                      <b>+</b>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <h3 v-if="subcat.nonVeg"  v-on:click="changeView(subcat,'nonVeg')">Non - Veg ></h3>
+            <div v-if="subcat.showNonVeg">
+            <div v-for="(item,n) in items" :key="n">
+              <div class="itemContainer" v-if="!item.isVeg && item.subCategory === subcat.subCategory">
+                <img src="../assets/img/nonVeg.png" alt="nonVegICon" width="18px" height="18px" style="position:absolute;display: inline-block;">
+                <div class="itemDetails">
                   <h4>{{item.name}}</h4>
-                  <h5>{{item.price}}  &#8377;</h5>
+                  <h5>{{item.price}} &#8377;</h5>
                   <p>{{item.description}}</p>
                 </div>
 
                 <div class="quantity">
                   <div>
-                      <button class="itemQty"><b>1</b></button>
+                    <button class="itemQty">
+                      <b>{{item.qty}}</b>
+                    </button>
                   </div>
-                  <button class="removeBtn"><b>-</b></button>
-                  
-                  <button class="addBtn"><b>+</b></button>
+                  <button class="removeBtn" v-on:click="removeFromCart(item)">
+                    <b>-</b>
+                  </button>
+                  <button class="addBtn"  v-on:click="addToCart(item)">
+                    <b>+</b>
+                  </button>
                 </div>
               </div>
-
             </div>
-            <h3>Non - Veg ></h3>
-            <div v-for="(item,n) in items" :key="n">
-              <div class="itemContainer" v-if="!item.isVeg && item.subCategory === subcat">
-                 <img src="../assets/img/nonVeg.png" alt="nonVegICon" width="18px" height="18px" style="position:absolute;display: inline-block;">
-              <div class="itemDetails">
-                  <h4>{{item.name}}</h4>
-                  <h5>{{item.price}}  &#8377;</h5>
-                  <p>{{item.description}}</p>
-                </div>
-
-                <div class="quantity">
-                   <div>
-                      <button class="itemQty"><b>1</b></button>
-                  </div>
-                  <button class="removeBtn"><b>-</b></button>
-                  <button class="addBtn"><b>+</b></button>
-                </div>
-              </div>
               <div>
               </div>
             </div>
@@ -116,6 +132,7 @@
     </div>
   </div>
 </template>
+
 
 <script>
 import FoodItem from '../models/FoodItem';
@@ -130,23 +147,27 @@ export default {
     };
   },
   methods: {
-    // checkForItem: function (subcat, type) {
-    //   this.items.forEach( item => {
-    //     if(item.subCategory === subcat) {
-    //       if(type === 'veg') {
-    //         if(item.isVeg) {
-    //           return true;
-    //         }
-    //       }
-    //       else if(type === 'nonVeg') {
-    //         if(!item.isVeg) {
-    //           return true;
-    //         }
-    //       }
-    //     }
-    //   })
-    //   return false
-    // }
+    addToCart : function (item) {
+      item.qty++
+      this.updateMe()
+    },
+    removeFromCart : function (item) {
+      if(item.qty > 0) {
+      item.qty--
+    }
+      this.updateMe()
+    },
+    changeView : function (subcat, k) {
+      if(k === 'veg') {
+        subcat.showVeg = !subcat.showVeg
+      } else {
+        subcat.showNonVeg = !subcat.showNonVeg
+      }
+      this.updateMe()
+    },
+    updateMe : function () {
+      this.$forceUpdate()
+    }
   },
   mounted() {
     var foodItem = new FoodItem();
@@ -155,7 +176,7 @@ export default {
     //   console.log(itemsList)
 
       this.items.forEach(item => {
-        
+        item.qty = 0
         if (this.category.indexOf(item.category) == -1) {
           this.category.push(item.category)
         }
@@ -164,6 +185,8 @@ export default {
       this.category.forEach(cat => {
           let subCatList = []
           let newSubCatList = []
+           let myData = []
+
           this.items.forEach(item => {
               if(cat === item.category) {
                   subCatList.push(item.subCategory)
@@ -171,14 +194,38 @@ export default {
           })
 
           subCatList.forEach( i => {
+          let map = {}
+            
           if(newSubCatList.indexOf(i) == -1) {
             newSubCatList.push(i)
+            
+            map['subCategory'] = i
+
+            this.items.forEach( mItem => {
+              if(mItem.subCategory === i) {
+
+                if(mItem.isVeg){
+                  map['veg'] = true
+                }else{
+                  map['nonVeg'] = true
+                }
+              }
+            })
+                  map['showVeg'] = false
+            
+                  map['showNonVeg'] = false
+            
+                // console.log(map)
+                myData.push(map)
           }
           })
 
-          this.subCategory[cat] = newSubCatList
-      });
-    //   console.log(this.subCategory);
+
+          this.subCategory[cat] = myData
+          // console.log(myData)
+      })
+
+      // console.log(this.subCategory);
     }.bind(this))
   }
 };
@@ -290,7 +337,7 @@ export default {
   font-weight: bold;
   opacity: 0.6;
   margin: 0;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
 }
 
 .itemDetails {
