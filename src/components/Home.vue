@@ -1,6 +1,6 @@
 <template>
   <div>
-      <order> </order>
+      <order :name="'Yahya'"> </order>
   </div>
 </template>
 

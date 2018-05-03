@@ -55,7 +55,7 @@ export default class FoodItem {
       .orderBy("isVeg")
       .get()
       .then(collectionSnapshot =>
-        collectionSnapshot.docs.map(doc => doc.data())
+        collectionSnapshot.docs.map(doc => Object.assign({}, doc.data(), {id: doc.id}))
       );
   }
 }

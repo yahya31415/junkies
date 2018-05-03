@@ -42,23 +42,13 @@
           <h5>Add to cart</h5>
           <img class="heart" src="../assets/img/heart-white.svg" alt="" height="24px" width="24px">
         </div>
-      </div>
-      <div class="itemCard">
-        <img class="itemImg" src="../assets/img/burger.jpg" alt="">
-        <div class="itemFooter">
-          <h5>Add to cart</h5>
-          <img class="heart" src="../assets/img/heart-white.svg" alt="" height="24px" width="24px">
-        </div>
-      </div>
-      <div class="itemCard">
-        <img class="itemImg" src="../assets/img/burger.jpg" alt="">
-        <div class="itemFooter">
-          <h5>Add to cart</h5>
-          <img class="heart" src="../assets/img/heart-white.svg" alt="" height="24px" width="24px">
-        </div>
-      </div>
+      </div>      
       <h1>Cafemoto</h1>
-      <!-- <button class="half-out-button"> Half out! </button> -->
+      <div style="display: flex; justify-content: end;">
+        <button class="half-out-button" @click="showCart()"> 
+          <img style="height: 35px; padding:8px;" src="../assets/img/cart.svg" alt="">
+        </button>
+      </div>
     </div>
 
     <div class="itemList">
@@ -135,7 +125,8 @@
 
 
 <script>
-import FoodItem from '../models/FoodItem';
+  import FoodItem from '../models/FoodItem';
+  import OrderItem from '../models/OrderItem';
 
 export default {
   name: 'item',
@@ -147,25 +138,49 @@ export default {
     };
   },
   methods: {
-    addToCart : function (item) {
+    addToCart: function (item) {
       item.qty++
+        this.updateMe()
+    },
+    removeFromCart: function (item) {
+      if (item.qty > 0) {
+        item.qty--
+      }
       this.updateMe()
     },
-    removeFromCart : function (item) {
-      if(item.qty > 0) {
-      item.qty--
-    }
-      this.updateMe()
-    },
-    changeView : function (subcat, k) {
-      if(k === 'veg') {
+    changeView: function (subcat, k) {
+      if (k === 'veg') {
         subcat.showVeg = !subcat.showVeg
       } else {
         subcat.showNonVeg = !subcat.showNonVeg
       }
       this.updateMe()
     },
-    updateMe : function () {
+    showCart: function () {
+      // let address = null
+
+      var cart = new OrderItem(this.items, "Tejaram Sutar")
+      
+      navigator.geolocation.getCurrentPosition(function (location) {
+        cart.latitude = location.coords.latitude
+        cart.longitude = location.coords.longitude
+
+        cart.saveToDb(window.firebase.firestore).then(function(ref) {
+        console.log(' ref ' + ref)
+      })
+      })
+      
+      // let latlng = new google.maps.LatLng(lat, lng);
+      // let geocoder = geocoder = new google.maps.Geocoder();
+      // geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+      //      if (status == google.maps.GeocoderStatus.OK) {
+      //          if (results[1]) {
+      //              alert("Location: " + results[1].formatted_address);
+      //         }
+      //      }
+      //  })
+    },
+    updateMe: function () {
       this.$forceUpdate()
     }
   },
@@ -173,7 +188,7 @@ export default {
     var foodItem = new FoodItem();
     foodItem.getItems(window.firebase.firestore).then(function (itemsList) {
       this.items = itemsList
-    //   console.log(itemsList)
+      // console.log(this.items)
 
       this.items.forEach(item => {
         item.qty = 0
@@ -183,46 +198,45 @@ export default {
       })
 
       this.category.forEach(cat => {
-          let subCatList = []
-          let newSubCatList = []
-           let myData = []
+        let subCatList = []
+        let newSubCatList = []
+        let myData = []
 
-          this.items.forEach(item => {
-              if(cat === item.category) {
-                  subCatList.push(item.subCategory)
-              }
-          })
+        this.items.forEach(item => {
+          if (cat === item.category) {
+            subCatList.push(item.subCategory)
+          }
+        })
 
-          subCatList.forEach( i => {
+        subCatList.forEach(i => {
           let map = {}
-            
-          if(newSubCatList.indexOf(i) == -1) {
+
+          if (newSubCatList.indexOf(i) == -1) {
             newSubCatList.push(i)
-            
+
             map['subCategory'] = i
 
-            this.items.forEach( mItem => {
-              if(mItem.subCategory === i) {
+            this.items.forEach(mItem => {
+              if (mItem.subCategory === i) {
 
-                if(mItem.isVeg){
+                if (mItem.isVeg) {
                   map['veg'] = true
-                }else{
+                } else {
                   map['nonVeg'] = true
                 }
               }
             })
-                  map['showVeg'] = false
-            
-                  map['showNonVeg'] = false
-            
-                // console.log(map)
-                myData.push(map)
+            map['showVeg'] = false
+
+            map['showNonVeg'] = false
+
+            // console.log(map)
+            myData.push(map)
           }
-          })
+        })
 
-
-          this.subCategory[cat] = myData
-          // console.log(myData)
+        this.subCategory[cat] = myData
+        // console.log(myData)
       })
 
       // console.log(this.subCategory);
@@ -232,11 +246,11 @@ export default {
 
 </script>
 
+
 <style scoped>
 .section1 {
-  /* position: relative; */
   width: auto;
-  height: 380px;
+  height: 430px;
   background-color: #ff8f00;
   overflow-x: auto;
   overflow-y: hidden;
@@ -307,14 +321,14 @@ export default {
 }
 
 .half-out-button {
-  position: absolute;
   bottom: 0;
   right: 5%;
   height: 70px;
   width: 70px;
   border-radius: 50%;
-  margin-bottom: -35px;
+  margin-bottom: 5px;
   background-color: #f5f5f5;
+  margin-left: 85%;
 }
 
 .itemList {
