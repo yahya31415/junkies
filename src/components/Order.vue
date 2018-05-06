@@ -240,6 +240,7 @@ export default {
   background-color: #ff8f00;
   box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
   padding-top: 56px;
+  background-image: url('../assets/bg3.png');
 }
 .toolbar {
   height: 56px;
@@ -252,6 +253,7 @@ export default {
   left: 0;
   right: 0;
   background-color: #ff8f00;
+  background-image: url('../assets/bg3.png');
   z-index: 1000;
 }
 .toolbar i {
@@ -269,6 +271,7 @@ export default {
   box-sizing: border-box;
   font-size: 24px;
   color: rgba(0, 0, 0, 0.5);
+  text-shadow: 0px 0px 16px rgba(0,0,0,0.2);
 }
 .subtitle {
   height: 72px;
@@ -276,6 +279,7 @@ export default {
   color: rgba(0, 0, 0, 0.8);
   padding-left: 73px;
   box-sizing: border-box;
+  text-shadow: 0px 0px 16px rgba(0,0,0,0.2);
 }
 
 .favorites {
@@ -445,7 +449,7 @@ export default {
 .itemQty {
   height: 42px;
   width: 42px;
-  background-color: #FBC02D;
+  background-color: #ff8f00;
   color: white;
   margin-left: 8px;
 }
@@ -458,6 +462,7 @@ export default {
 .removeBtn, .addBtn, .itemQty {
   border-radius: 50%;
   text-align: center;
+  border: none;
 }
 
 .itemContainer {
