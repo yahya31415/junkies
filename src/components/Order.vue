@@ -1,53 +1,41 @@
 <template>
   <div>
-    <div class="section1">
-      <div class="itemCard">
-        <img class="itemImg" src="../assets/img/burger.jpg" alt="">
-        <div class="itemFooter">
-          <h5>Add to cart</h5>
-          <img class="heart" src="../assets/img/heart-white.svg" alt="" height="24px" width="24px">
+    <div class="appbar">
+      <section class="toolbar">
+        <div class="left">
+          <img src="../assets/logo.png" height="40" alt="">
         </div>
-      </div>
-      <div class="itemCard">
-        <img class="itemImg" src="../assets/img/burger.jpg" alt="">
-        <div class="itemFooter">
-          <h5>Add to cart</h5>
-          <img class="heart" src="../assets/img/heart-white.svg" alt="" height="24px" width="24px">
+        <div class="right">
+          <router-link to="/cart">
+            <i class="material-icons">shopping_cart</i>
+          </router-link>
+          <router-link to="/profile">
+            <i class="material-icons">account_circle</i>
+          </router-link>
+          <a>
+            <i class="material-icons">exit_to_app</i>
+          </a>
         </div>
-      </div>
-      <div class="itemCard">
-        <img class="itemImg" src="../assets/img/burger.jpg" alt="">
-        <div class="itemFooter">
-          <h5>Add to cart</h5>
-          <img class="heart" src="../assets/img/heart-white.svg" alt="" height="24px" width="24px">
+      </section>
+      <section class="title">
+        <h1>Cafemoto</h1>
+      </section>
+      <section class="subtitle">
+        <span>Lorem ipsum porem foo bar.</span>
+      </section>
+    </div>
+
+    <div class="favorites">
+      <p>Favourites</p>
+      <div>
+        <div class="itemCard" v-for="i in [1,2,3,4,5,6]" :key="i">
+          <img class="itemImg" src="../assets/img/burger.jpg" alt="">
+          <div class="itemFooter">
+            <h5>Add to cart</h5>
+            <img class="heart" src="../assets/img/heart-white.svg" alt="" height="24px" width="24px">
+          </div>
         </div>
-      </div>
-      <div class="itemCard">
-        <img class="itemImg" src="../assets/img/burger.jpg" alt="">
-        <div class="itemFooter">
-          <h5>Add to cart</h5>
-          <img class="heart" src="../assets/img/heart-white.svg" alt="" height="24px" width="24px">
-        </div>
-      </div>
-      <div class="itemCard">
-        <img class="itemImg" src="../assets/img/burger.jpg" alt="">
-        <div class="itemFooter">
-          <h5>Add to cart</h5>
-          <img class="heart" src="../assets/img/heart-white.svg" alt="" height="24px" width="24px">
-        </div>
-      </div>
-      <div class="itemCard">
-        <img class="itemImg" src="../assets/img/burger.jpg" alt="">
-        <div class="itemFooter">
-          <h5>Add to cart</h5>
-          <img class="heart" src="../assets/img/heart-white.svg" alt="" height="24px" width="24px">
-        </div>
-      </div>      
-      <h1>Cafemoto</h1>
-      <div style="display: flex; justify-content: end;">
-        <button class="half-out-button" @click="showCart()"> 
-          <img style="height: 35px; padding:8px;" src="../assets/img/cart.svg" alt="">
-        </button>
+        <div class="fav-spacing"></div>
       </div>
     </div>
 
@@ -58,7 +46,6 @@
           <div v-for="(subcat, i) in subCategory[cat]" :key="i">
             <h2 style="margin: 8px 0">{{subcat.subCategory}}</h2>
 
-            <h3 v-if="subcat.veg" @click="changeView(subcat,'veg')">Veg ></h3>
             <div v-if="subcat.showVeg">
               <div v-for="(item,m) in items" :key="m">
                 <div class="itemContainer" v-if="item.isVeg && item.subCategory === subcat.subCategory">
@@ -87,7 +74,6 @@
               </div>
 
             </div>
-            <h3 v-if="subcat.nonVeg"  v-on:click="changeView(subcat,'nonVeg')">Non - Veg ></h3>
             <div v-if="subcat.showNonVeg">
             <div v-for="(item,n) in items" :key="n">
               <div class="itemContainer" v-if="!item.isVeg && item.subCategory === subcat.subCategory">
@@ -160,7 +146,7 @@ export default {
       // let address = null
 
       var cart = new OrderItem(this.items, "Tejaram Sutar")
-      
+
       navigator.geolocation.getCurrentPosition(function (location) {
         cart.latitude = location.coords.latitude
         cart.longitude = location.coords.longitude
@@ -169,7 +155,7 @@ export default {
         console.log(' ref ' + ref)
       })
       })
-      
+
       // let latlng = new google.maps.LatLng(lat, lng);
       // let geocoder = geocoder = new google.maps.Geocoder();
       // geocoder.geocode({ 'latLng': latlng }, function (results, status) {
@@ -226,9 +212,9 @@ export default {
                 }
               }
             })
-            map['showVeg'] = false
+            map['showVeg'] = true
 
-            map['showNonVeg'] = false
+            map['showNonVeg'] = true
 
             // console.log(map)
             myData.push(map)
@@ -248,36 +234,92 @@ export default {
 
 
 <style scoped>
-.section1 {
+.appbar {
   width: auto;
-  height: 430px;
+  height: 236px;
   background-color: #ff8f00;
-  overflow-x: auto;
-  overflow-y: hidden;
-  white-space: nowrap;
-  padding: 0 60px;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
+  padding-top: 56px;
+}
+.toolbar {
+  height: 56px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 16px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #ff8f00;
+  z-index: 1000;
+}
+.toolbar i {
+  padding: 10px;
+  color: rgba(0, 0, 0, 0.5);
+}
+.toolbar img {
+  height: 26px;
+  padding: 10px 16px;
+}
+.title {
+  height: 80px;
+  padding-bottom: 8px;
+  padding-left: 72px;
+  box-sizing: border-box;
+  font-size: 24px;
+  color: rgba(0, 0, 0, 0.5);
+}
+.subtitle {
+  height: 72px;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.8);
+  padding-left: 73px;
+  box-sizing: border-box;
 }
 
+.favorites {
+  background: rgba(0, 0, 0, 0.07);
+}
+.favorites > p {
+  text-transform: uppercase;
+  font-size: 12px;
+  margin: 0;
+  padding: 16px;
+  font-weight: 800;
+  color: rgba(0, 0, 0, 0.5);
+}
+.favorites > div {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 0 16px 16px 16px;
+}
+.fav-spacing {
+  width: 16px;
+  flex: 0 0 auto;
+}
 .itemCard {
-  display: inline-block;
+  display: block;
   height: 210px;
   width: 150px;
-  margin: 50px 20px;
+  flex: 0 0 auto;
+  margin: 0 8px 0 0;
   background-color: #f5f5f5;
-  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
 }
 
 .itemCard:hover {
-  box-shadow: 0 16px 24px 0 rgba(0, 0, 0, 0.3);
-  transform: scale(1.1);
-  transition: ease-in-out;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s;
 }
 
 .itemImg {
   width: 100%;
   height: 160px;
   object-position: center;
+  object-fit: cover;
   overflow: hidden;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
@@ -333,7 +375,7 @@ export default {
 
 .itemList {
   text-align: left;
-  padding-left: 30px;
+  padding-left: 16px;
   padding-bottom: 40px;
 }
 
@@ -341,17 +383,21 @@ export default {
   margin-bottom: 8px;
 }
 
+#item h1 {
+  font-size: 24px;
+}
+
 #item h2 {
-  font-weight: bolder;
-  opacity: 0.85;
-  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 800;
+  color: rgba(0, 0, 0, 0.5);
+  padding: 24px 0 2px 0;
 }
 
 #item h3 {
-  font-weight: bold;
-  opacity: 0.6;
-  margin: 0;
-  margin-bottom: 16px;
+  font-size: 16px;
+  font-weight: 800;
+  color: rgba(0, 0, 0, 0.5);
 }
 
 .itemDetails {
@@ -362,7 +408,7 @@ export default {
 }
 
 .itemDetails h4 {
-  margin-bottom:5px; 
+  margin-bottom:5px;
   margin-top: 0;
   font-size: 16px;
 }
@@ -373,16 +419,16 @@ export default {
 }
 
 .itemDetails p {
-  margin-top: 5px; 
+  margin-top: 5px;
   font-size: 14px;
 }
 
 .quantity {
-  width: 40%;
-  display: inline-block; 
+  display: inline-block;
   position: absolute;
   margin-top: 10px;
   padding-right: 16px;
+  box-sizing: border-box;
 }
 
 .addBtn {
@@ -409,7 +455,7 @@ export default {
   color: white;
 }
 
-.removeBtn, .addBtn, .itemQty {  
+.removeBtn, .addBtn, .itemQty {
   border-radius: 50%;
   text-align: center;
 }
