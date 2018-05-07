@@ -2,6 +2,7 @@
   <div>
     <div class="appbar">
       <section class="toolbar">
+            <i class="material-icons">keyboard_backspace</i>
         <div class="left">
           <img src="../assets/logo.png" height="40" alt="">
         </div>
@@ -127,7 +128,14 @@ export default {
   methods: {
     addToCart: function (item) {
       item.qty++
-        this.updateMe()
+      window.firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          console.log(user)
+         } else {
+    // No user is signed in.
+         }
+      });
+      this.updateMe()
     },
     removeFromCart: function (item) {
       if (item.qty > 0) {
@@ -253,6 +261,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding-right: 16px;
+  padding-left: 16px;
   position: fixed;
   top: 0;
   left: 0;

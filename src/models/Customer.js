@@ -22,17 +22,26 @@ export default class Customer {
     this.cartId = cartId;
   }
 
-  saveCartId(firestore: Object,cartId: String) {
+  saveCartId(firestore: Object, cartId: String) {
     firestore()
-    .collection("Users1").doc(this.id).set({
-      cartId: cartId
-  })
-  .then(function() {
-      console.log("Document successfully written!");
-  })
-  .catch(function(error) {
-      console.error("Error writing document: ", error);
-  });
-  
+      .collection("Users1").doc(this.id).set({
+        cartId: cartId
+      })
+      .then(function () {
+        console.log("cart id added!");
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  }
+
+  getCustomer(firestore: Object) {
+    return firestore()
+      .collection('Users1')
+      .doc(this.id)
+      .get()
+      .then(collectionSnapshot =>
+        collectionSnapshot.docs.map(doc => doc.data())
+      );
   }
 }
