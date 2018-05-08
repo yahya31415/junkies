@@ -13,12 +13,16 @@ export default class OrderItem {
   paymentMethod: string = ""
   rating: number = 0
   list: []
+  userId: String
 
-  constructor(items: Array, customer: string) {
-    this.items = items
-    this.customer = customer
-    this.getItemList()
+  setId(id: String) {
+    this.id = id
   }
+
+  // constructor(id: String) {
+  //   this.id = id
+  //   this.getItemList()
+  // }
 
   toJSON = (): Object => ({
     items: this.list,
@@ -47,29 +51,41 @@ export default class OrderItem {
     this.list = itemList
   }
 
-  saveToDb(firestore: Object) {
-   return firestore()
-      .collection('FoodOrders')
-      .add(this.toJSON())
-      .then(docRef => this.id = docRef.id)
-      .catch(function (error) {
-        console.error("Error adding document: ", error);
-      })
-  }
+  // saveToDb(firestore: Object) {
+  //   return firestore()
+  //      .collection('FoodOrders')
+  //      .add(this.toJSON())
+  //      .then(docRef => this.id = docRef.id)
+  //      .catch(function (error) {
+  //        console.error("Error adding document: ", error);
+  //      })
+  //  }
 
-  // GetAddress() {
-  //     var latlng = new google.maps.LatLng(lat, lng);
-  //     var geocoder = geocoder = new google.maps.Geocoder();
-  //     geocoder.geocode({ 'latLng': latlng }, function (results, status) {
-  //         if (status == google.maps.GeocoderStatus.OK) {
-  //             if (results[1]) {
-  //                 alert("Location: " + results[1].formatted_address);
-  //             }
-  //         }
-  //     });
-  // }
+   updateCartById(firestore: Object, id: String, item: Object) {
+    this.getCartById(firestore: Object, id: String).then((data) => {
+      for(let i=0;i< data.items.length; i++){
+        if(data.items[i] === item.id) {
+          data.items[i].quantity = item.qty
+          firestore().collection("FoodOrders").doc(id).set(data)
+        }
+      }
+    })
+   }
+   
+   updateCart(firestore: Object,item: Object) {
+     let list = [{'id':item.id, 'quantity':item.qty}]
 
-  getOrder(firestore: Object, id: String) {
+    return firestore()
+       .collection('FoodOrders')
+       .doc()
+       .add({'items': list})
+       .then(docRef => this.id = docRef.id)
+       .catch(function (error) {
+         console.error("Error adding document: ", error);
+       })
+   }
+
+  getCartById(firestore: Object, id: String) {
     return firestore()
       .collection('FoodOrders')
       .doc(id)

@@ -62,11 +62,11 @@
                         <b>{{item.qty}}</b>
                       </button>
                     </div>
-                    <button class="removeBtn" @click="removeFromCart(item)">
+                    <button class="removeBtn" @click="updateMyCart(item,'remove')">
                       <b>-</b>
                     </button>
 
-                    <button class="addBtn" @click="addToCart(item)">
+                    <button class="addBtn" @click="updateMyCart(item,'add')">
                       <b>+</b>
                     </button>
                   </div>
@@ -90,10 +90,10 @@
                       <b>{{item.qty}}</b>
                     </button>
                   </div>
-                  <button class="removeBtn" v-on:click="removeFromCart(item)">
+                  <button class="removeBtn" v-on:click="updateMyCart(item,'remove')">
                     <b>-</b>
                   </button>
-                  <button class="addBtn"  v-on:click="addToCart(item)">
+                  <button class="addBtn"  v-on:click="updateMyCart(item,'add')">
                     <b>+</b>
                   </button>
                 </div>
@@ -125,31 +125,42 @@ export default {
     };
   },
   methods: {
-    addToCart: function (item) {
-      item.qty++
+    updateMyCart: function (item,operation) {
+      
       window.firebase.auth().onAuthStateChanged(function(firestoreUser) {
         if (firestoreUser) {
           console.log(firestoreUser.uid)
 
           const users = new Users(firestoreUser.uid)
+
+          if(operation === 'add') {
+            item.qty++
+          } else {
+            if(item.qty != 0){
+              item.qty--
+            }
+          }
+
           users.getUser(window.firebase.firestore).then( (data) => {
             console.log(data)
+
             if('cartId' in data) {
               console.log('cart id available')
+
+              const cart = new OrderItem()
+              cart.updateCartById(window.firebase.firestore, data.cartId,item)
+
             }else{
               console.log('cart id unavailable')
+              const cart = new OrderItem()
+              cart.updateCart(window.firebase.firestore,item)
             }
           })
+
          } else {
           this.$router.replace('/login')           
          }
       });
-      this.updateMe()
-    },
-    removeFromCart: function (item) {
-      if (item.qty > 0) {
-        item.qty--
-      }
       this.updateMe()
     },
     changeView: function (subcat, k) {
