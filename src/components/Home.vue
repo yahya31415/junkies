@@ -52,7 +52,7 @@
                   <img src="../assets/img/veg.png" alt="vegICon" width="18px" height="18px">
                   <div class="itemDetails">
                     <h4>{{item.name}}</h4>
-                    <h5>{{item.price}} &#8377;</h5>
+                    <h5>&#8377;{{item.price}}</h5>
                     <p>{{item.description}}</p>
                   </div>
 
@@ -80,7 +80,7 @@
                 <img src="../assets/img/nonVeg.png" alt="nonVegICon" width="18px" height="18px">
                 <div class="itemDetails">
                   <h4>{{item.name}}</h4>
-                  <h5>{{item.price}} &#8377;</h5>
+                  <h5>&#8377;{{item.price}}</h5>
                   <p>{{item.description}}</p>
                 </div>
 
@@ -109,10 +109,9 @@
   </div>
 </template>
 
-
 <script>
-  import FoodItem from '../models/FoodItem';
-  import OrderItem from '../models/OrderItem';
+  import FoodItem from '../models/FoodItems';
+  import CartItem from '../models/CartItems';
   import Users from '../models/Users';
 
 export default {
@@ -145,18 +144,18 @@ export default {
             console.log(data)
 
             if('cartId' in data) {
-              console.log('cart id available')
+              // console.log('cart id available')
 
-              const cart = new OrderItem()
+              const cart = new CartItem()
               cart.updateCartById(window.firebase.firestore, data.cartId,item)
 
             }else{
-              console.log('cart id unavailable')
+              // console.log('cart id unavailable')
               if(item.qty > 0){
               let list = [{id:item.id, quantity:item.qty}]
               let itemMap = {items: list}
 
-              const cart = new OrderItem()
+              const cart = new CartItem()
               cart.updateCart(window.firebase.firestore,itemMap).then(cartId => {
               users.saveCartId(window.firebase.firestore,cartId)
               })
@@ -180,7 +179,7 @@ export default {
     },
     showCart: function () {
 
-      var cart = new OrderItem(this.items, "Tejaram Sutar")
+      var cart = new CartItem(this.items, "Tejaram Sutar")
 
       navigator.geolocation.getCurrentPosition(function (location) {
         cart.latitude = location.coords.latitude

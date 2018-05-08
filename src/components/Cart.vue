@@ -42,6 +42,7 @@
 
 
 <script>
+// import CartItems from '../models/CartItems'
 export default {
   name: 'cart',
   data: function () {
@@ -49,7 +50,16 @@ export default {
       items: []
     };
   },
-  props: ['id']
+  methods: {
+
+  }, 
+  mounted() {
+    // var foodItem = new FoodItem();
+    // foodItem.getItems(window.firebase.firestore).then(function (itemsList) {
+    //   this.items = itemsList
+    //   // console.log(this.items)
+    // })
+  }
 }
 </script>
 
