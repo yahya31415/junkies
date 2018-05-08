@@ -61,37 +61,46 @@ export default class OrderItem {
   //      })
   //  }
 
-   updateCartById(firestore: Object, id: String, item: Object) {
-    this.getCartById(firestore: Object, id: String).then((data) => {
-      for(let i=0;i< data.items.length; i++){
-        if(data.items[i] === item.id) {
+  updateCartById(firestore: Object, id: String, item: Object) {
+    let dataAdded = false
+
+    this.getCartById(firestore: Object, id: String).then(data => {
+      for (let i = 0; i < data.items.length; i++) {
+        if (data.items[i].id == item.id) {
+          if(item.qty > 0){
           data.items[i].quantity = item.qty
+          }else {
+            data.items.splice(i, 1);
+          }
           firestore().collection("FoodOrders").doc(id).set(data)
+          dataAdded = true
+        }
+      }
+
+      if(!dataAdded) {
+        if(item.qty > 0){
+        data.items.push({id: item.id, quantity: item.qty})
+        firestore().collection("FoodOrders").doc(id).set(data)
         }
       }
     })
-   }
-   
-   updateCart(firestore: Object,item: Object) {
-     let list = [{'id':item.id, 'quantity':item.qty}]
+  }
 
-    return firestore()
-       .collection('FoodOrders')
-       .doc()
-       .add({'items': list})
-       .then(docRef => this.id = docRef.id)
-       .catch(function (error) {
-         console.error("Error adding document: ", error);
-       })
-   }
-
-  getCartById(firestore: Object, id: String) {
+  updateCart(firestore: Object, item: Object) {
     return firestore()
       .collection('FoodOrders')
-      .doc(id)
+      .add(item)
+      .then(docRef => this.id = docRef.id)
+      .catch(function (error) {
+        console.error("Error adding document: ", error);
+      })
+  }
+
+  getCartById(firestore: Object, cartId: String) {
+    return firestore()
+      .collection('FoodOrders')
+      .doc(cartId)
       .get()
-      .then(collectionSnapshot =>
-        collectionSnapshot.docs.map(doc => doc.data())
-      );
+      .then(doc => doc.data())
   }
 }

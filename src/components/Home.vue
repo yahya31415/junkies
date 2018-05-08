@@ -152,8 +152,15 @@ export default {
 
             }else{
               console.log('cart id unavailable')
+              if(item.qty > 0){
+              let list = [{id:item.id, quantity:item.qty}]
+              let itemMap = {items: list}
+
               const cart = new OrderItem()
-              cart.updateCart(window.firebase.firestore,item)
+              cart.updateCart(window.firebase.firestore,itemMap).then(cartId => {
+              users.saveCartId(window.firebase.firestore,cartId)
+              })
+              }
             }
           })
 
@@ -172,7 +179,6 @@ export default {
       this.updateMe()
     },
     showCart: function () {
-      // let address = null
 
       var cart = new OrderItem(this.items, "Tejaram Sutar")
 
