@@ -26,7 +26,7 @@
 export default {
   mounted: function () {
     window.firebase.auth().onAuthStateChanged(function (user) {
-      if (user) this.$router.replace('/home')
+      if (user) this.$router.replace('/')
       else {
         var ui = new window.firebaseui.auth.AuthUI(window.firebase.auth())
         ui.start('#firebaseui-auth-container', {

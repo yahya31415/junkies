@@ -113,7 +113,7 @@
 <script>
   import FoodItem from '../models/FoodItem';
   import OrderItem from '../models/OrderItem';
-  import Customer from '../models/Customer';
+  import Users from '../models/Users';
 
 export default {
   name: 'item',
@@ -127,14 +127,18 @@ export default {
   methods: {
     addToCart: function (item) {
       item.qty++
-      window.firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-          console.log(user.uid)
+      window.firebase.auth().onAuthStateChanged(function(firestoreUser) {
+        if (firestoreUser) {
+          console.log(firestoreUser.uid)
 
-          const customer = new Customer(user.uid)
-          customer.getUser(window.firebase.firestore).then( (data) => {
+          const users = new Users(firestoreUser.uid)
+          users.getUser(window.firebase.firestore).then( (data) => {
             console.log(data)
-
+            if('cartId' in data) {
+              console.log('cart id available')
+            }else{
+              console.log('cart id unavailable')
+            }
           })
          } else {
           this.$router.replace('/login')           
@@ -168,21 +172,11 @@ export default {
         cart.saveToDb(window.firebase.firestore).then(function(ref) {
         console.log(' ref ' + ref)
 
-        new Customer("tejas1234").saveCartId(window.firebase.firestore,ref)
+        new Users("tejas1234").saveCartId(window.firebase.firestore,ref)
         // customer.saveCartId(window.firebase.firestore,ref)
 
       })
     })
-
-      // let latlng = new google.maps.LatLng(lat, lng);
-      // let geocoder = geocoder = new google.maps.Geocoder();
-      // geocoder.geocode({ 'latLng': latlng }, function (results, status) {
-      //      if (status == google.maps.GeocoderStatus.OK) {
-      //          if (results[1]) {
-      //              alert("Location: " + results[1].formatted_address);
-      //         }
-      //      }
-      //  })
     },
     updateMe: function () {
       this.$forceUpdate()

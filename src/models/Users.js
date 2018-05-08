@@ -35,21 +35,6 @@ export default class Customer {
       });
   }
 
-  getCustomer(firestore: Object) {
-    return firestore()
-      .collection('Users1')
-      .doc(this.id)
-      .get()
-      .then(function (collectionSnapshot) {
-        if (collectionSnapshot.doc != undefined) {
-          collectionSnapshot.docs.map(doc => doc.data())
-          console.log(collectionSnapshot)
-        } else {
-          return null
-        }
-      });
-  }
-
   getUser(firestore: Object) {
     return firestore()
       .collection("Users1")

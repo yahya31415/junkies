@@ -12,7 +12,7 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/home',
+      path: '/',
       name: 'Home',
       component: Home
     },
@@ -22,7 +22,7 @@ export default new Router({
       component: Cart
     },
     {
-      path: '/',
+      path: '/login',
       name: 'Login',
       component: Login
     }
