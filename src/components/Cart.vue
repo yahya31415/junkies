@@ -1,7 +1,9 @@
 <template>
   <div>
     <section class="toolbar">
+       <router-link to="/">
       <i class="material-icons">keyboard_backspace</i>
+       </router-link>
       <div class="left">
         <img src="../assets/logo.png" height="40" alt="">
       </div>
@@ -19,11 +21,12 @@
     </section>
     
     <div class="orderList">
-      <div class="item">
-        <img src="../assets/img/veg.png" alt="vegICon" width="18px" height="18px">
+      <div class="item" v-for="(item,i) in items" :key="i">
+        <img v-if="item.isVeg" src="../assets/img/veg.png" alt="vegICon" width="18px" height="18px">
+        <img v-if="!item.isVeg" src="../assets/img/nonVeg.png" alt="vegICon" width="18px" height="18px">
         <div class="decription">
-          <h5>Dark Chocolate Overload Waffle</h5>
-          <p>Vanilla ice cream, Vanilla ice cream</p>
+          <h5>{{item.name}}</h5>
+          <p>{{item.description}}</p>
           <div class="cutomize">
           <h6>CUSTOMIZE </h6>
             <i class="material-icons">keyboard_arrow_down</i>
@@ -31,10 +34,10 @@
         </div>    
         <div class="quantity">
           <span class="removeItem">-</span>
-          <span class="qty">1</span>
+          <span class="qty">{{item.qty}}</span>
           <span class="addItem">+</span>
         </div>
-         <h5 class="price">&#8377;200</h5>
+         <h5 class="price">&#8377;{{item.qty * item.price}}</h5>
       </div>
     </div>
   </div>
@@ -42,7 +45,9 @@
 
 
 <script>
-// import CartItems from '../models/CartItems'
+import CartItems from '../models/CartItems'
+import FoodItems from '../models/FoodItems'
+import Users from '../models/Users'
 export default {
   name: 'cart',
   data: function () {
@@ -52,13 +57,44 @@ export default {
   },
   methods: {
 
-  }, 
+  },
   mounted() {
-    // var foodItem = new FoodItem();
-    // foodItem.getItems(window.firebase.firestore).then(function (itemsList) {
-    //   this.items = itemsList
-    //   // console.log(this.items)
-    // })
+    window.firebase.auth().onAuthStateChanged(function (firestoreUser) {
+      if (firestoreUser) {
+        const users = new Users(firestoreUser.uid)
+        users.getUser(window.firebase.firestore).then((data) => {
+
+          if ('cartId' in data) {
+            new CartItems().getCartById(window.firebase.firestore, data.cartId).then(cartData => {
+
+              var list = []
+
+              new FoodItems().getItems(window.firebase.firestore).then(foodData => {
+                foodData.forEach(foodItem => {
+                  cartData['items'].forEach(cartItem => {
+                    if (foodItem.id == cartItem.id) {
+                      foodItem.qty = cartItem.quantity
+                      list.push(foodItem)
+                    }
+                  })
+                })
+                
+              this.items = list
+              // this.items.bind(list)
+              // this.$forceUpdate()
+              console.log(this.items)
+              })
+            })
+
+          } else {
+            console.log('cart is empty')
+          }
+        })
+      } else {
+        this.$router.replace('/login')
+      }
+    }).bind(this)
+              // this.$forceUpdate()    
   }
 }
 </script>
