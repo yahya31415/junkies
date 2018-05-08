@@ -2,7 +2,6 @@
   <div>
     <div class="appbar">
       <section class="toolbar">
-            <i class="material-icons">keyboard_backspace</i>
         <div class="left">
           <img src="../assets/logo.png" height="40" alt="">
         </div>
@@ -130,9 +129,15 @@ export default {
       item.qty++
       window.firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
-          console.log(user)
+          console.log(user.uid)
+
+          const customer = new Customer(user.uid)
+          customer.getUser(window.firebase.firestore).then( (data) => {
+            console.log(data)
+
+          })
          } else {
-    // No user is signed in.
+          this.$router.replace('/login')           
          }
       });
       this.updateMe()
