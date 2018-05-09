@@ -80,10 +80,8 @@ export default {
                 })
                 
               this.items = list
-              // this.items.bind(list)
-              // this.$forceUpdate()
               console.log(this.items)
-              })
+              }).bind(this)
             })
 
           } else {
@@ -93,8 +91,7 @@ export default {
       } else {
         this.$router.replace('/login')
       }
-    }).bind(this)
-              // this.$forceUpdate()    
+    })
   }
 }
 </script>
