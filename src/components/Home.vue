@@ -43,12 +43,12 @@
       <div id="item">
         <div v-for="(cat, j) in category" :key="j">
           <h1 style="margin-bottom:0;">{{cat}}</h1>
-          <div v-for="(subcat, i) in subCategory[cat]" :key="i">
-            <h2 style="margin: 8px 0">{{subcat.subCategory}}</h2>
+          <div v-for="(subcat, i) in subcategory[cat]" :key="i">
+            <h2 style="margin: 8px 0">{{subcat.subcategory}}</h2>
 
             <div v-if="subcat.showVeg">
               <div v-for="(item,m) in items" :key="m">
-                <div class="itemContainer" v-if="item.isVeg && item.subCategory === subcat.subCategory">
+                <div class="itemContainer" v-if="item.isVeg && item.subcategory === subcat.subcategory">
                   <img src="../assets/img/veg.png" alt="vegICon" width="18px" height="18px">
                   <div class="itemDetails">
                     <h4>{{item.name}}</h4>
@@ -76,7 +76,7 @@
             </div>
             <div v-if="subcat.showNonVeg">
             <div v-for="(item,n) in items" :key="n">
-              <div class="itemContainer" v-if="!item.isVeg && item.subCategory === subcat.subCategory">
+              <div class="itemContainer" v-if="!item.isVeg && item.subcategory === subcat.subcategory">
                 <img src="../assets/img/nonVeg.png" alt="nonVegICon" width="18px" height="18px">
                 <div class="itemDetails">
                   <h4>{{item.name}}</h4>
@@ -120,12 +120,12 @@ export default {
     return {
       items: [],
       category: [],
-      subCategory: {}
+      subcategory: {}
     };
   },
   methods: {
     updateMyCart: function (item,operation) {
-      
+
       window.firebase.auth().onAuthStateChanged(function(firestoreUser) {
         if (firestoreUser) {
           console.log(firestoreUser.uid)
@@ -164,7 +164,7 @@ export default {
           })
 
          } else {
-          this.$router.replace('/login')           
+          this.$router.replace('/login')
          }
       });
       this.updateMe()
@@ -218,7 +218,7 @@ export default {
 
         this.items.forEach(item => {
           if (cat === item.category) {
-            subCatList.push(item.subCategory)
+            subCatList.push(item.subcategory)
           }
         })
 
@@ -228,10 +228,10 @@ export default {
           if (newSubCatList.indexOf(i) == -1) {
             newSubCatList.push(i)
 
-            map['subCategory'] = i
+            map['subcategory'] = i
 
             this.items.forEach(mItem => {
-              if (mItem.subCategory === i) {
+              if (mItem.subcategory === i) {
 
                 if (mItem.isVeg) {
                   map['veg'] = true
@@ -249,11 +249,11 @@ export default {
           }
         })
 
-        this.subCategory[cat] = myData
+        this.subcategory[cat] = myData
         // console.log(myData)
       })
 
-      // console.log(this.subCategory);
+      // console.log(this.subcategory);
     }.bind(this))
   }
 };

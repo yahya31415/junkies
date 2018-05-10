@@ -6,7 +6,7 @@ export default class FoodItem {
   description: string;
   isVeg: boolean;
   category: string;
-  subCategory: string;
+  subcategory: string;
 
   setName(name: string) {
     this.name = name;
@@ -28,8 +28,8 @@ export default class FoodItem {
     this.category = category;
   }
 
-  setSubCategory(subCategory: string) {
-    this.subCategory = subCategory;
+  setsubcategory(subcategory: string) {
+    this.subcategory = subcategory;
   }
 
   toJSON = (): Object => ({
@@ -38,7 +38,7 @@ export default class FoodItem {
     description: this.description,
     isVeg: this.isVeg,
     category: this.category,
-    subCategory: this.subCategory
+    subcategory: this.subcategory
   });
 
   saveToDb(firestore: Object) {
@@ -50,9 +50,7 @@ export default class FoodItem {
   getItems(firestore: Object) {
     return firestore()
       .collection('FoodItems')
-      .orderBy("category")
-      .orderBy("subCategory")
-      .orderBy("isVeg")
+      .orderBy("order")
       .get()
       .then(collectionSnapshot =>
         collectionSnapshot.docs.map(doc => Object.assign({}, doc.data(), {id: doc.id}))
