@@ -23,47 +23,29 @@
     <div v-if="showDialog" id="dialog">
       <div class="dialogContainer">
         <div class="dialogItem">
-          <img src="../assets/img/veg.png" alt="veg" width="18px" height="18px">
-          <!-- <img src="../assets/img/nonVeg.png" alt="non-veg" width="18px" height="18px"> -->
+          <img v-if="itemAddOns.isVeg" src="../assets/img/veg.png" alt="veg" width="18px" height="18px">
+          <img v-if="!itemAddOns.isVeg" src="../assets/img/nonVeg.png" alt="non-veg" width="18px" height="18px">
           <div>
-            <h5>Dark Chocolate Overload Waffle</h5>
-            <span>&#8377;250</span>
+            <h5>{{itemAddOns.name}}</h5>
+            <span>&#8377;{{itemAddOns.price}}</span>
           </div>
         </div>
         <div>
-          <h5 style="margin:0;padding:16px 32px;">Add Ons (1)</h5>
+          <h5 style="margin:0;padding:16px 32px;">Add Ons</h5>
 
-          <div class="addOn">
-            <img src="../assets/img/veg.png" alt="veg" width="16px" height="16px"> &nbsp;
-            <input type="checkbox" name="addOns" id="addOnCheck">
-            <span>Chocolate Sprincle &#8377;25</span>
+          <div v-for="(addOn,i) in itemAddOns.addOns" :key="i">
+            <div class="addOn">
+              <img v-if="addOn.isVeg" src="../assets/img/veg.png" alt="veg" width="16px" height="16px"> &nbsp;
+              <img v-if="!addOn.isVeg" src="../assets/img/nonVeg.png" alt="veg" width="16px" height="16px"> &nbsp;
+              <input @click="addOnChecked(addOn.name)" type="checkbox" name="addOns" id="addOnCheck">
+              <span>{{addOn.name}} &#8377;{{addOn.price}}</span>
+            </div>
           </div>
-          <div class="addOn">
-            <img src="../assets/img/veg.png" alt="veg" width="16px" height="16px"> &nbsp;
-            <input type="checkbox" name="addOns" id="addOnCheck">
-            <span>Chocolate Sprincle &#8377;25</span>
-          </div>
-          <div class="addOn">
-            <img src="../assets/img/veg.png" alt="veg" width="16px" height="16px"> &nbsp;
-            <input type="checkbox" name="addOns" id="addOnCheck">
-            <span>Chocolate Sprincle &#8377;25</span>
-          </div>
-          <div class="addOn">
-            <img src="../assets/img/veg.png" alt="veg" width="16px" height="16px"> &nbsp;
-            <input type="checkbox" name="addOns" id="addOnCheck">
-            <span>Chocolate Sprincle &#8377;25</span>
-          </div>
-          <div class="addOn">
-            <img src="../assets/img/veg.png" alt="veg" width="16px" height="16px"> &nbsp;
-            <input type="checkbox" name="addOns" id="addOnCheck">
-            <span>Chocolate Sprincle &#8377;25</span>
-          </div>
-
         </div>
         <hr>
         <div class="dialogFooter">
-          <span>Item total &#8377; 25</span>
-          <h5 @click="dialog()">UPDATE ITEM</h5>
+          <span>Item total &#8377;{{itemAddOns.total}}</span>
+          <h5 @click="updateItem()">UPDATE ITEM</h5>
         </div>
       </div>
     </div>
@@ -75,7 +57,7 @@
           <h4>{{item.name}}</h4>
           <p>{{item.description}}</p>
           <div @click="dialog()" class="cutomize">
-            <h5>CUSTOMIZE </h5>
+            <h5 @click="getAddOns(item)">CUSTOMIZE </h5>
             <i class="material-icons">keyboard_arrow_down</i>
           </div>
         </div>
@@ -84,7 +66,7 @@
           <span class="qty">{{item.qty}}</span>
           <span class="addItem" @click="itemCounter(item,'add')">+</span>
         </div>
-        <h5 class="price">&#8377;{{item.qty * item.price}}</h5>
+        <h5 class="price">&#8377;{{ item.total}}</h5>
       </div>
     </div>
   </div>
@@ -94,11 +76,14 @@
 import CartItems from '../models/CartItems'
 import FoodItems from '../models/FoodItems'
 import Users from '../models/Users'
+import AddOns from '../models/AddOns'
+
 export default {
   name: 'cart',
   data: function () {
     return {
       items: [],
+      itemAddOns: {},
       showDialog: false
     };
   },
@@ -106,14 +91,53 @@ export default {
     itemCounter: function (item, operation) {
       if (operation === 'add') {
         item.qty++;
+        item.total += item.price
       } else {
         if (item.qty != 0) {
           item.qty--;
+          item.total -= item.price
         }
       }
     },
     dialog: function () {
       this.showDialog = !this.showDialog
+    },
+    updateItem: function (id) {
+      for (let i = 0; i < this.items.length; i++) {
+        if (this.items[i].id == id) {
+          this.items[i].total = this.itemAddOns.total
+          this.items.addOns = this.itemAddOns.addOns
+        }
+      }
+      this.dialog()
+
+    },
+    getAddOns: function (item) {
+      for (let i = 0; i < item.addOns; i++) {
+        item.addOns[i].isChecked = false
+      }
+      item.total = item.total
+      this.itemAddOns = item
+      console.log(this.itemAddOns)
+    },
+    addOnChecked: function (name) {
+
+      for (let i = 0; i < this.itemAddOns.addOns.length; i++) {
+
+        if (this.itemAddOns.addOns[i].name == name) {
+          this.itemAddOns.addOns[i].isChecked = !this.itemAddOns.addOns[i].isChecked
+
+          if (this.itemAddOns.addOns[i].isChecked) {
+            this.itemAddOns.total += this.itemAddOns.addOns[i].price
+            console.log('if')
+            console.log(this.itemAddOns)
+          } else {
+            console.log('else')
+            this.itemAddOns.total -= this.itemAddOns.addOns[i].price
+            console.log(this.itemAddOns)
+          }
+        }
+      }
     }
   },
   mounted() {
@@ -127,17 +151,32 @@ export default {
             new CartItems().getCartById(window.firebase.firestore, data.cartId).then(cartData => {
 
               new FoodItems().getItems(window.firebase.firestore).then(foodData => {
+
                 foodData.forEach(foodItem => {
+
                   cartData['items'].forEach(cartItem => {
+
                     if (foodItem.id == cartItem.id) {
                       foodItem.qty = cartItem.quantity
+                      foodItem.total = foodItem.price
                       list.push(foodItem)
                     }
                   })
                 })
+
+                new AddOns().getAddOns(window.firebase.firestore).then(itemAddOns => {
+
+                  for (let i = 0; i < list.length; i++) {
+                    itemAddOns.forEach(addOn => {
+
+                      if (list[i].id == addOn.itemId) {
+                        list[i].addOns = addOn.items
+                      }
+                    })
+                  }
+                })
               })
             })
-
           } else {
             console.log('cart is empty')
           }
