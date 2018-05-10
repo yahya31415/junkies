@@ -12,7 +12,7 @@
           <router-link to="/profile">
             <i class="material-icons">account_circle</i>
           </router-link>
-          <a>
+          <a @click="signOut">
             <i class="material-icons">exit_to_app</i>
           </a>
         </div>
@@ -196,6 +196,9 @@ export default {
     },
     updateMe: function () {
       this.$forceUpdate()
+    },
+    signOut () {
+      window.firebase.auth().signOut()
     }
   },
   mounted() {
