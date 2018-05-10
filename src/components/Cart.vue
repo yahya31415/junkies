@@ -25,24 +25,23 @@
         <img v-if="item.isVeg" src="../assets/img/veg.png" alt="vegICon" width="18px" height="18px">
         <img v-if="!item.isVeg" src="../assets/img/nonVeg.png" alt="vegICon" width="18px" height="18px">
         <div class="decription">
-          <h5>{{item.name}}</h5>
+          <h4>{{item.name}}</h4>
           <p>{{item.description}}</p>
           <div class="cutomize">
-          <h6>CUSTOMIZE </h6>
+          <h5>CUSTOMIZE </h5>
             <i class="material-icons">keyboard_arrow_down</i>
           </div>
         </div>    
         <div class="quantity">
-          <span class="removeItem">-</span>
+          <span class="removeItem" @click="itemCounter(item,'remove')">-</span>
           <span class="qty">{{item.qty}}</span>
-          <span class="addItem">+</span>
+          <span class="addItem" @click="itemCounter(item,'add')">+</span>
         </div>
          <h5 class="price">&#8377;{{item.qty * item.price}}</h5>
       </div>
     </div>
   </div>
 </template>
-
 
 <script>
 import CartItems from '../models/CartItems'
@@ -56,9 +55,18 @@ export default {
     };
   },
   methods: {
-
+    itemCounter: function(item,operation) {
+      if(operation === 'add') {
+        item.qty++;
+      }else{
+        if(item.qty != 0) {
+          item.qty--;
+        }
+      }
+    }
   },
   mounted() {
+    var list = []    
     window.firebase.auth().onAuthStateChanged(function (firestoreUser) {
       if (firestoreUser) {
         const users = new Users(firestoreUser.uid)
@@ -66,8 +74,6 @@ export default {
 
           if ('cartId' in data) {
             new CartItems().getCartById(window.firebase.firestore, data.cartId).then(cartData => {
-
-              var list = []
 
               new FoodItems().getItems(window.firebase.firestore).then(foodData => {
                 foodData.forEach(foodItem => {
@@ -78,10 +84,7 @@ export default {
                     }
                   })
                 })
-                
-              this.items = list
-              console.log(this.items)
-              }).bind(this)
+              })
             })
 
           } else {
@@ -91,7 +94,9 @@ export default {
       } else {
         this.$router.replace('/login')
       }
-    })
+      this.items = list
+      console.log(this.items)
+    }.bind(this))
   }
 }
 </script>
@@ -135,31 +140,45 @@ export default {
   padding-bottom: 4px;
   opacity: 0.7;
 }
-.decription h5, h6 {
+.decription h5, h4 {
   margin: 0;
   padding-bottom: 4px;
   opacity: 0.7;  
 }
 .decription {
-  margin: 0 8px;
+  width: 100%;
+  margin: 0px 8px;
+}
+.decription p {
+  font-size: 16px;
+  margin-bottom: 2px;
 }
 .quantity span {
   padding: 4px 8px;
+  font-size: 16px;
 }
 .quantity {
   display: flex;
   border: solid grey 1px;
   height: fit-content;
   flex-wrap: space-between;
+  margin: 0 8px;
+  font-weight: 600;
 }
 .price {
   margin: 4px 8px;
   font-size: 14px;
   text-align: right;
   opacity: 0.7;
+  width: 30px;
 }
 .addItem, .qty {
   color: #43A047;
+}
+.qty {
+  /* width: 25px; */
+  width: 20px;  
+  text-align: center
 }
 .cutomize {
   display: flex;
