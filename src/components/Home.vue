@@ -1,30 +1,17 @@
 <template>
-  <div>
-    <div class="appbar">
-      <section class="toolbar">
-        <div class="left">
-          <img src="../assets/logo.png" height="40" alt="">
-        </div>
-        <div class="right">
-          <router-link to="/cart">
-            <i class="material-icons">shopping_cart</i>
-          </router-link>
-          <router-link to="/profile">
-            <i class="material-icons">account_circle</i>
-          </router-link>
-          <a @click="signOut">
-            <i class="material-icons">exit_to_app</i>
-          </a>
-        </div>
-      </section>
-      <section class="title">
-        <h1>Cafemoto</h1>
-      </section>
-      <section class="subtitle">
-        <span>Lorem ipsum porem foo bar.</span>
-      </section>
+  <div id="home">
+
+    <!-- App bar -->
+    <div class="appbar mdc-elevation--z4">
+      <div class="title">
+        <h4 class="mdc-typography--headline4">Cafemoto</h4>
+      </div>
+      <div class="subtitle">
+        <span class="mdc-typography--headline6">Lorem ipsum porem foo bar.</span>
+      </div>
     </div>
 
+    <!-- Favourites -->
     <div class="favorites">
       <p>Favourites</p>
       <div>
@@ -39,19 +26,44 @@
       </div>
     </div>
 
-    <div class="itemList">
+    <div class="foodItems">
+      <div v-for="(subcategories, category) in items" :key="category">
+        <span class="mdc-typography--headline4 food-category">{{category}}</span>
+        <div v-for="(items, subcategory) in subcategories" :key="subcategory">
+          <span class="mdc-typography--overline food-subcategory">{{subcategory}}</span>
+          <div v-for="(item, i) in items" :key="i" class="foodItem mdc-card" :veg="item.isVeg">
+            <div>
+              <span class="mdc-typography--subtitle1 food-name">{{item.name}}</span>
+              <span class="mdc-typography--caption food-desc">{{item.description}}</span>
+              <span class="mdc-typography--subtitle2 food-price">&#8377; {{item.price}}</span>
+            </div>
+            <div>
+              <div class="cart-modifier">
+                <div class="cart-qty mdc-typography--headline4">{{ cart[item.id] }}</div>
+                <div>
+                  <button><i class="material-icons" @click="addToCart(item.id)">add</i></button>
+                  <button><i class="material-icons" @click="removeFromCart(item.id)">remove</i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="itemList">
       <div id="item">
         <div v-for="(cat, j) in category" :key="j">
-          <h1 style="margin-bottom:0;">{{cat}}</h1>
+
           <div v-for="(subcat, i) in subcategory[cat]" :key="i">
-            <h2 style="margin: 8px 0">{{subcat.subcategory}}</h2>
+            <h2 style="margin: 8px 0" class="mdc-typography--headline6">{{subcat.subcategory}}</h2>
 
             <div v-if="subcat.showVeg">
               <div v-for="(item,m) in items" :key="m">
                 <div class="itemContainer" v-if="item.isVeg && item.subcategory === subcat.subcategory">
                   <img src="../assets/img/veg.png" alt="vegICon" width="18px" height="18px">
                   <div class="itemDetails">
-                    <h4>{{item.name}}</h4>
+                    <h4 class="mdc-typography--headline6">{{item.name}}</h4>
                     <h5>&#8377;{{item.price}}</h5>
                     <p>{{item.description}}</p>
                   </div>
@@ -79,7 +91,7 @@
               <div class="itemContainer" v-if="!item.isVeg && item.subcategory === subcat.subcategory">
                 <img src="../assets/img/nonVeg.png" alt="nonVegICon" width="18px" height="18px">
                 <div class="itemDetails">
-                  <h4>{{item.name}}</h4>
+                  <h4 class="mdc-typography--headline4">{{item.name}}</h4>
                   <h5>&#8377;{{item.price}}</h5>
                   <p>{{item.description}}</p>
                 </div>
@@ -105,69 +117,32 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
-  import FoodItem from '../models/FoodItems';
   import CartItem from '../models/CartItems';
   import Users from '../models/Users';
 
 export default {
   name: 'item',
+  props: ['foodItems'],
   data: function () {
     return {
-      items: [],
-      category: [],
-      subcategory: {}
+      items: {},
+      cart: {}
     };
   },
   methods: {
     updateMyCart: function (item,operation) {
-
-      window.firebase.auth().onAuthStateChanged(function(firestoreUser) {
-        if (firestoreUser) {
-          console.log(firestoreUser.uid)
-
-          const users = new Users(firestoreUser.uid)
-
-          if(operation === 'add') {
-            item.qty++
-          } else {
-            if(item.qty != 0){
-              item.qty--
-            }
-          }
-
-          users.getUser(window.firebase.firestore).then( (data) => {
-            console.log(data)
-
-            if('cartId' in data) {
-              // console.log('cart id available')
-
-              const cart = new CartItem()
-              cart.updateCartById(window.firebase.firestore, data.cartId,item)
-
-            }else{
-              // console.log('cart id unavailable')
-              if(item.qty > 0){
-              let list = [{id:item.id, quantity:item.qty}]
-              let itemMap = {items: list}
-
-              const cart = new CartItem()
-              cart.updateCart(window.firebase.firestore,itemMap).then(cartId => {
-              users.saveCartId(window.firebase.firestore,cartId)
-              })
-              }
-            }
-          })
-
-         } else {
-          this.$router.replace('/login')
-         }
-      });
-      this.updateMe()
+      if(operation === 'add') {
+        item.qty++
+      } else {
+        if(item.qty != 0){
+          item.qty--
+        }
+      }
     },
     changeView: function (subcat, k) {
       if (k === 'veg') {
@@ -194,70 +169,85 @@ export default {
       })
     })
     },
-    updateMe: function () {
-      this.$forceUpdate()
+    addToCart (id) {
+      if (this.cart.hasOwnProperty(id)) this.$set(this.cart, id, this.cart[id] + 1)
+      else this.$set(this.cart, id, 1)
     },
-    signOut () {
-      window.firebase.auth().signOut()
+    removeFromCart (id) {
+      if (this.cart.hasOwnProperty(id) && this.cart[id] > 1) this.$set(this.cart, id, this.cart[id] - 1)
+      else if (this.cart.hasOwnProperty(id) && this.cart[id] === 1) this.$delete(this.cart, id)
+    }
+  },
+  watch: {
+    foodItems () {
+      let _items = {}
+      this.foodItems.forEach(item => {
+        if (_items[item.category] === undefined) _items[item.category] = {[item.subcategory]: [item]}
+        else if (_items[item.category][item.subcategory] === undefined) _items[item.category][item.subcategory] = [item]
+        else _items[item.category][item.subcategory].push(item)
+      })
+      this.items = _items
     }
   },
   mounted() {
-    var foodItem = new FoodItem();
-    foodItem.getItems(window.firebase.firestore).then(function (itemsList) {
-      this.items = itemsList
-      // console.log(this.items)
 
-      this.items.forEach(item => {
-        item.qty = 0
-        if (this.category.indexOf(item.category) == -1) {
-          this.category.push(item.category)
-        }
-      })
 
-      this.category.forEach(cat => {
-        let subCatList = []
-        let newSubCatList = []
-        let myData = []
+    // var foodItem = new FoodItem();
+    // foodItem.getItems(window.firebase.firestore).then(function (itemsList) {
+    //   this.items = itemsList
+    //   // console.log(this.items)
 
-        this.items.forEach(item => {
-          if (cat === item.category) {
-            subCatList.push(item.subcategory)
-          }
-        })
+    //   this.items.forEach(item => {
+    //     item.qty = 0
+    //     if (this.category.indexOf(item.category) == -1) {
+    //       this.category.push(item.category)
+    //     }
+    //   })
 
-        subCatList.forEach(i => {
-          let map = {}
+    //   this.category.forEach(cat => {
+    //     let subCatList = []
+    //     let newSubCatList = []
+    //     let myData = []
 
-          if (newSubCatList.indexOf(i) == -1) {
-            newSubCatList.push(i)
+    //     this.items.forEach(item => {
+    //       if (cat === item.category) {
+    //         subCatList.push(item.subcategory)
+    //       }
+    //     })
 
-            map['subcategory'] = i
+    //     subCatList.forEach(i => {
+    //       let map = {}
 
-            this.items.forEach(mItem => {
-              if (mItem.subcategory === i) {
+    //       if (newSubCatList.indexOf(i) == -1) {
+    //         newSubCatList.push(i)
 
-                if (mItem.isVeg) {
-                  map['veg'] = true
-                } else {
-                  map['nonVeg'] = true
-                }
-              }
-            })
-            map['showVeg'] = true
+    //         map['subcategory'] = i
 
-            map['showNonVeg'] = true
+    //         this.items.forEach(mItem => {
+    //           if (mItem.subcategory === i) {
 
-            // console.log(map)
-            myData.push(map)
-          }
-        })
+    //             if (mItem.isVeg) {
+    //               map['veg'] = true
+    //             } else {
+    //               map['nonVeg'] = true
+    //             }
+    //           }
+    //         })
+    //         map['showVeg'] = true
 
-        this.subcategory[cat] = myData
-        // console.log(myData)
-      })
+    //         map['showNonVeg'] = true
 
-      // console.log(this.subcategory);
-    }.bind(this))
+    //         // console.log(map)
+    //         myData.push(map)
+    //       }
+    //     })
+
+    //     this.subcategory[cat] = myData
+    //     // console.log(myData)
+    //   })
+
+    //   // console.log(this.subcategory);
+    // }.bind(this))
   }
 };
 
@@ -267,54 +257,30 @@ export default {
 <style scoped>
 .appbar {
   width: auto;
-  height: 236px;
-  background-color: #ff8f00;
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
-  padding-top: 56px;
-  background-image: url('../assets/bg3.png');
-}
-.toolbar {
-  height: 56px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-right: 16px;
-  padding-left: 16px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  height: 160px;
   background-color: #ff8f00;
   background-image: url('../assets/bg3.png');
-  z-index: 1000;
-}
-.toolbar i {
-  padding: 10px;
-  color: rgba(0, 0, 0, 0.5);
-}
-.toolbar img {
-  height: 26px;
-  padding: 10px 16px;
 }
 .title {
   height: 80px;
-  padding-bottom: 8px;
+  display: flex;
+  align-items: flex-end;
   padding-left: 72px;
+  padding-bottom: 8px;
   box-sizing: border-box;
-  font-size: 24px;
   color: rgba(0, 0, 0, 0.5);
-  text-shadow: 0px 0px 16px rgba(0,0,0,0.2);
+}
+.title h4 {
+  margin: 0;
 }
 .subtitle {
   height: 72px;
-  font-size: 16px;
-  color: rgba(0, 0, 0, 0.8);
-  padding-left: 73px;
+  color: rgba(0, 0, 0, 0.5);
+  padding-left: 76px;
   box-sizing: border-box;
-  text-shadow: 0px 0px 16px rgba(0,0,0,0.2);
 }
 
-.favorites {
+#home {
   background: rgba(0, 0, 0, 0.07);
 }
 .favorites > p {
@@ -375,116 +341,70 @@ export default {
   justify-content: center;
 }
 
-.section1 h1 {
-  margin: 0;
-  text-align: left;
-  opacity: 0.7;
-}
-
-.section1::-webkit-scrollbar-thumb:hover {
-  background: #fff3e0;
-}
-
-.section1::-webkit-scrollbar-thumb:active {
-  background: linear-gradient(left, #babdbe, #babdbe);
-}
-
-.section1::-webkit-scrollbar {
-  height: 8px;
-  background-color: #f5f5f5;
-}
-
 .heart:active {
   background-image: url(../assets/img/heart-red.svg);
 }
 
-.itemList {
-  text-align: left;
+.foodItems {
+  padding-top: 16px;
+}
+.foodItems > div {
+  padding: 16px 0;
+}
+.foodItems > div > div {
+  padding: 16px 0;
+}
+.food-category {
   padding-left: 16px;
-  padding-bottom: 40px;
 }
-
-#item {
-  margin-bottom: 8px;
+.food-subcategory {
+  padding-left: 16px;
+  font-weight: bold;
 }
-
-#item h1 {
-  font-size: 24px;
+.foodItems > div > div > div span {
+  display: block;
 }
-
-#item h2 {
-  font-size: 16px;
-  font-weight: 800;
-  color: rgba(0, 0, 0, 0.5);
-  padding: 24px 0 2px 0;
-}
-
-#item h3 {
-  font-size: 16px;
-  font-weight: 800;
-  color: rgba(0, 0, 0, 0.5);
-}
-
-.itemDetails {
-   margin: 0 8px;
-   flex: auto;
-   text-align: left;
-}
-
-.itemDetails h4 {
-  margin-bottom:5px;
-  margin-top: 0;
-  font-size: 16px;
-}
-
-.itemDetails h5 {
-  margin:0;
-  color: #43A047;
-}
-
-.itemDetails p {
-  margin-top: 5px;
-  font-size: 14px;
-}
-
-.quantity {
-  margin: 8px;
-}
-
-.addBtn {
-  height: 24px;
-  width: 24px;
-  margin-left: 4px;
-}
-
-.removeBtn {
-  height: 24px;
-  width: 24px;
-}
-
-.itemQty {
-  height: 42px;
-  width: 42px;
-  background-color: #ff8f00;
-  color: white;
-  margin-left: 8px;
-}
-
-.addBtn, .removeBtn {
-  background-color: #263238;
-  color: white;
-}
-
-.removeBtn, .addBtn, .itemQty {
-  border-radius: 50%;
-  text-align: center;
-  border: none;
-}
-
-.itemContainer {
-  margin-bottom: 16px;
-  padding: 8px;
+.foodItem {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
+  margin: 12px 16px;
+  padding: 12px 16px;
+  border-radius: 6px;
+}
+.foodItem[veg] {
+  border-left: solid 8px green;
+}
+.foodItem > div:first-child {
+  padding-right: 16px;
+}
+.food-price {
+  padding-top: 12px;
+  font-weight: 900;
+}
+.cart-modifier {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+}
+.cart-modifier > div:last-child {
+  display: flex;
+}
+.cart-modifier button {
+  background: none;
+  border: solid 2px #000;
+  border-radius: 100%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 4px;
+}
+.cart-modifier i {
+  font-size: 16px;
+  font-weight: bold;
 }
 </style>

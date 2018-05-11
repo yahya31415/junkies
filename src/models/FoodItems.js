@@ -1,6 +1,7 @@
 // // @flow
 
-export default class FoodItem {
+class FoodItem {
+  id: string;
   name: string;
   price: number;
   description: string;
@@ -8,33 +9,10 @@ export default class FoodItem {
   category: string;
   subcategory: string;
 
-  setName(name: string) {
-    this.name = name;
-  }
-
-  setPrice(price: number) {
-    this.price = price;
-  }
-
-  setDescription(description: string) {
-    this.description = description;
-  }
-
-  setIsVeg(isVeg: boolean) {
-    this.isVeg = isVeg;
-  }
-
-  setCategory(category: string) {
-    this.category = category;
-  }
-
-  setsubcategory(subcategory: string) {
-    this.subcategory = subcategory;
-  }
-
   toJSON = (): Object => ({
+    id: this.id,
     name: this.name,
-    cost: this.cost,
+    price: this.price,
     description: this.description,
     isVeg: this.isVeg,
     category: this.category,
@@ -47,13 +25,29 @@ export default class FoodItem {
       .add(this.toJSON());
   }
 
-  getItems(firestore: Object) {
+}
+
+export default class FoodItems {
+  constructor(firestore: Object) {
     return firestore()
       .collection('FoodItems')
-      .orderBy("order")
+      .orderBy('order')
       .get()
       .then(collectionSnapshot =>
-        collectionSnapshot.docs.map(doc => Object.assign({}, doc.data(), {id: doc.id}))
+        collectionSnapshot.docs.map(doc =>
+          Object.assign({}, doc.data(), { id: doc.id })
+        )
+      ).then(items => items.map(item => {
+          var fi = new FoodItem()
+          fi.id = item.id
+          fi.name = item.name
+          fi.price = item.price
+          fi.description = item.description
+          fi.isVeg = item.isVeg
+          fi.category = item.category
+          fi.subcategory = item.subcategory
+          return fi
+        })
       );
   }
 }
