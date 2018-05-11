@@ -7,12 +7,12 @@
         <h4 class="mdc-typography--headline4">Cafemoto</h4>
       </div>
       <div class="subtitle">
-        <span class="mdc-typography--headline6">Lorem ipsum porem foo bar.</span>
+        <span class="mdc-typography--headline6">Midnight online store</span>
       </div>
     </div>
 
     <!-- Favourites -->
-    <div class="favorites">
+    <div class="favorites" v-if="false">
       <p>Favourites</p>
       <div>
         <div class="itemCard" v-for="i in [1,2,3,4,5,6]" :key="i">

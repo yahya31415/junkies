@@ -32,6 +32,7 @@ export default class FoodItems {
     return firestore()
       .collection('FoodItems')
       .orderBy('order')
+      .orderBy('isVeg')
       .get()
       .then(collectionSnapshot =>
         collectionSnapshot.docs.map(doc =>
