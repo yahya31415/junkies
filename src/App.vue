@@ -9,14 +9,14 @@
           <span class="mdc-top-app-bar__title"><img src="./assets/logo.png" height="24" alt=""></span>
         </section>
         <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
-          <a href="#" @click="goToCart" class="material-icons mdc-top-app-bar__action-item" aria-label="Cart" alt="Cart">shopping_cart</a>
+          <router-link to="/cart" class="material-icons mdc-top-app-bar__action-item" aria-label="Cart" alt="Cart">shopping_cart</router-link>
           <!-- <router-link to="/profile" class="material-icons mdc-top-app-bar__action-item" aria-label="Profile" alt="Profile">account_circle</router-link>
           <a href="#" @click="signOut" class="material-icons mdc-top-app-bar__action-item" aria-label="Sign Out" alt="Sign Out">exit_to_app</a> -->
         </section>
       </div>
     </header>
     <main>
-      <router-view :foodItems="foodItems"></router-view>
+      <router-view :lfoodItems="foodItems" :lcart="cart" :addToCart="addToCart" :removeFromCart="removeFromCart" :itemCounter="itemCounter"></router-view>
     </main>
   </div>
 </template>
@@ -25,17 +25,33 @@
 import FoodItems from './models/FoodItems';
 export default {
   name: 'app',
-  data () {
-    return {
-      foodItems: []
-    }
-  },
   methods: {
     goToCart () {
 
     },
     signOut () {
       window.firebase.auth().signOut()
+    },
+    addToCart (id) {
+      if (this.cart.hasOwnProperty(id)) this.$set(this.cart, id, this.cart[id] + 1)
+      else this.$set(this.cart, id, 1)
+    },
+    removeFromCart (id) {
+      if (this.cart.hasOwnProperty(id) && this.cart[id] > 1) this.$set(this.cart, id, this.cart[id] - 1)
+      else if (this.cart.hasOwnProperty(id) && this.cart[id] === 1) this.$delete(this.cart, id)
+    },
+    itemCounter: function (id, operation) {
+      if (operation === 'add') {
+        this.cart[id] = this.cart[id] + 1;
+      } else {
+        if (this.cart[id] != 1) {
+          this.cart[id] = this.cart[id] - 1;
+        } else {
+          var cart = Object.assign({}, this.cart)
+          delete cart[id]
+          this.cart = cart
+        }
+      }
     }
   },
   mounted () {
@@ -59,7 +75,7 @@ html,body {
 }
 :root {
     --mdc-theme-primary: #ff8f00;
-    --mdc-theme-secondary: #018786;
+    --mdc-theme-secondary: #000;
     --mdc-theme-background: #fff;
     --mdc-theme-surface: #fff;
     --mdc-theme-on-primary: rgba(0,0,0,0.5);
@@ -90,6 +106,10 @@ html,body {
 }
 .mdc-top-app-bar {
   background-image: url('./assets/bg3.png');
+  z-index: 100;
+}
+.mdc-slider:not(.mdc-slider--disabled) .mdc-slider__track-container {
+    background-color: rgba(0,0,0,.1);
 }
 main {
   padding-top: 56px;

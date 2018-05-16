@@ -18,7 +18,7 @@
         <div class="itemCard" v-for="i in [1,2,3,4,5,6]" :key="i">
           <img class="itemImg" src="../assets/img/burger.jpg" alt="">
           <div class="itemFooter">
-            <h5>Add to cart</h5>
+            <h5>Add to lcart</h5>
             <img class="heart" src="../assets/img/heart-white.svg" alt="" height="24px" width="24px">
           </div>
         </div>
@@ -26,7 +26,7 @@
       </div>
     </div>
 
-    <div class="foodItems">
+    <div class="lfoodItems">
       <div v-for="(subcategories, category) in items" :key="category">
         <span class="mdc-typography--headline4 food-category">{{category}}</span>
         <div v-for="(items, subcategory) in subcategories" :key="subcategory">
@@ -38,8 +38,8 @@
               <span class="mdc-typography--subtitle2 food-price">&#8377; {{item.price}}</span>
             </div>
             <div>
-              <div class="cart-modifier">
-                <div class="cart-qty mdc-typography--headline4">{{ cart[item.id] }}</div>
+              <div class="lcart-modifier">
+                <div class="lcart-qty mdc-typography--headline4">{{ lcart[item.id] }}</div>
                 <div>
                   <button><i class="material-icons" @click="addToCart(item.id)">add</i></button>
                   <button><i class="material-icons" @click="removeFromCart(item.id)">remove</i></button>
@@ -122,66 +122,19 @@
 </template>
 
 <script>
-  import CartItem from '../models/CartItems';
-  import Users from '../models/Users';
 
 export default {
   name: 'item',
-  props: ['foodItems'],
+  props: ['lfoodItems', 'lcart', 'addToCart', 'removeFromCart'],
   data: function () {
     return {
-      items: {},
-      cart: {}
+      items: {}
     };
   },
-  methods: {
-    updateMyCart: function (item,operation) {
-      if(operation === 'add') {
-        item.qty++
-      } else {
-        if(item.qty != 0){
-          item.qty--
-        }
-      }
-    },
-    changeView: function (subcat, k) {
-      if (k === 'veg') {
-        subcat.showVeg = !subcat.showVeg
-      } else {
-        subcat.showNonVeg = !subcat.showNonVeg
-      }
-      this.updateMe()
-    },
-    showCart: function () {
-
-      var cart = new CartItem(this.items, "Tejaram Sutar")
-
-      navigator.geolocation.getCurrentPosition(function (location) {
-        cart.latitude = location.coords.latitude
-        cart.longitude = location.coords.longitude
-
-        cart.saveToDb(window.firebase.firestore).then(function(ref) {
-        console.log(' ref ' + ref)
-
-        new Users("tejas1234").saveCartId(window.firebase.firestore,ref)
-        // customer.saveCartId(window.firebase.firestore,ref)
-
-      })
-    })
-    },
-    addToCart (id) {
-      if (this.cart.hasOwnProperty(id)) this.$set(this.cart, id, this.cart[id] + 1)
-      else this.$set(this.cart, id, 1)
-    },
-    removeFromCart (id) {
-      if (this.cart.hasOwnProperty(id) && this.cart[id] > 1) this.$set(this.cart, id, this.cart[id] - 1)
-      else if (this.cart.hasOwnProperty(id) && this.cart[id] === 1) this.$delete(this.cart, id)
-    }
-  },
   watch: {
-    foodItems () {
+    lfoodItems () {
       let _items = {}
-      this.foodItems.forEach(item => {
+      this.lfoodItems.forEach(item => {
         if (_items[item.category] === undefined) _items[item.category] = {[item.subcategory]: [item]}
         else if (_items[item.category][item.subcategory] === undefined) _items[item.category][item.subcategory] = [item]
         else _items[item.category][item.subcategory].push(item)
@@ -189,65 +142,14 @@ export default {
       this.items = _items
     }
   },
-  mounted() {
-
-
-    // var foodItem = new FoodItem();
-    // foodItem.getItems(window.firebase.firestore).then(function (itemsList) {
-    //   this.items = itemsList
-    //   // console.log(this.items)
-
-    //   this.items.forEach(item => {
-    //     item.qty = 0
-    //     if (this.category.indexOf(item.category) == -1) {
-    //       this.category.push(item.category)
-    //     }
-    //   })
-
-    //   this.category.forEach(cat => {
-    //     let subCatList = []
-    //     let newSubCatList = []
-    //     let myData = []
-
-    //     this.items.forEach(item => {
-    //       if (cat === item.category) {
-    //         subCatList.push(item.subcategory)
-    //       }
-    //     })
-
-    //     subCatList.forEach(i => {
-    //       let map = {}
-
-    //       if (newSubCatList.indexOf(i) == -1) {
-    //         newSubCatList.push(i)
-
-    //         map['subcategory'] = i
-
-    //         this.items.forEach(mItem => {
-    //           if (mItem.subcategory === i) {
-
-    //             if (mItem.isVeg) {
-    //               map['veg'] = true
-    //             } else {
-    //               map['nonVeg'] = true
-    //             }
-    //           }
-    //         })
-    //         map['showVeg'] = true
-
-    //         map['showNonVeg'] = true
-
-    //         // console.log(map)
-    //         myData.push(map)
-    //       }
-    //     })
-
-    //     this.subcategory[cat] = myData
-    //     // console.log(myData)
-    //   })
-
-    //   // console.log(this.subcategory);
-    // }.bind(this))
+  mounted () {
+    let _items = {}
+      this.lfoodItems.forEach(item => {
+        if (_items[item.category] === undefined) _items[item.category] = {[item.subcategory]: [item]}
+        else if (_items[item.category][item.subcategory] === undefined) _items[item.category][item.subcategory] = [item]
+        else _items[item.category][item.subcategory].push(item)
+      })
+      this.items = _items
   }
 };
 
@@ -345,13 +247,13 @@ export default {
   background-image: url(../assets/img/heart-red.svg);
 }
 
-.foodItems {
+.lfoodItems {
   padding-top: 16px;
 }
-.foodItems > div {
+.lfoodItems > div {
   padding: 16px 0;
 }
-.foodItems > div > div {
+.lfoodItems > div > div {
   padding: 16px 0;
 }
 .food-category {
@@ -361,7 +263,7 @@ export default {
   padding-left: 16px;
   font-weight: bold;
 }
-.foodItems > div > div > div span {
+.lfoodItems > div > div > div span {
   display: block;
 }
 .foodItem {
@@ -382,17 +284,17 @@ export default {
   padding-top: 12px;
   font-weight: 900;
 }
-.cart-modifier {
+.lcart-modifier {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
   height: 100%;
 }
-.cart-modifier > div:last-child {
+.lcart-modifier > div:last-child {
   display: flex;
 }
-.cart-modifier button {
+.lcart-modifier button {
   background: none;
   border: solid 2px #000;
   border-radius: 100%;
@@ -403,7 +305,7 @@ export default {
   align-items: center;
   margin: 4px;
 }
-.cart-modifier i {
+.lcart-modifier i {
   font-size: 16px;
   font-weight: bold;
 }

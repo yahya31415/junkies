@@ -1,6 +1,27 @@
 <template>
-  <div>
-    <section class="toolbar">
+  <div id="cart">
+
+    <div class="mdc-slider mdc-slider--discrete mdc-slider--display-markers" tabindex="0" role="slider"
+        aria-valuemin="1" aria-valuemax="4" aria-valuenow="2"
+        aria-label="Cart" aria-disabled>
+      <div class="mdc-slider__track-container">
+        <div class="mdc-slider__track"></div>
+        <div class="mdc-slider__track-marker-container"></div>
+      </div>
+      <div class="mdc-slider__thumb-container">
+        <div class="mdc-slider__pin">
+          <span class="mdc-slider__pin-value-marker"></span>
+        </div>
+        <svg class="mdc-slider__thumb" width="21" height="21">
+          <circle cx="10.5" cy="10.5" r="7.875"></circle>
+        </svg>
+        <div class="mdc-slider__focus-ring"></div>
+      </div>
+    </div>
+
+    <h2 class="mdc-typography--headline6">Cart</h2>
+
+    <!-- <section class="toolbar">
       <router-link to="/">
         <i class="material-icons">keyboard_backspace</i>
       </router-link>
@@ -8,8 +29,8 @@
         <img src="../assets/logo.png" height="40" alt="">
       </div>
       <div class="right">
-        <router-link to="/cart">
-          <i class="material-icons">shopping_cart</i>
+        <router-link to="/lcart">
+          <i class="material-icons">shopping_lcart</i>
         </router-link>
         <router-link to="/profile">
           <i class="material-icons">account_circle</i>
@@ -18,9 +39,9 @@
           <i class="material-icons">exit_to_app</i>
         </a>
       </div>
-    </section>
+    </section> -->
 
-    <div v-if="showDialog" id="dialog">
+    <!-- <div v-if="showDialog" id="dialog">
       <div class="dialogContainer">
         <div class="dialogItem">
           <img v-if="itemAddOns.isVeg" src="../assets/img/veg.png" alt="veg" width="18px" height="18px">
@@ -48,38 +69,46 @@
           <h5 @click="updateItem()">UPDATE ITEM</h5>
         </div>
       </div>
-    </div>
+    </div> -->
+
     <div class="orderList">
-      <div class="item" v-for="(item,i) in items" :key="i">
-        <img v-if="item.isVeg" src="../assets/img/veg.png" alt="vegICon" width="18px" height="18px">
-        <img v-if="!item.isVeg" src="../assets/img/nonVeg.png" alt="vegICon" width="18px" height="18px">
+      <div class="item mdc-card" v-for="(size,id) in lcart" :key="id">
+        <img v-if="getItem(id).isVeg" src="../assets/img/veg.png" alt="vegICon" width="18px" height="18px">
+        <img v-if="!getItem(id).isVeg" src="../assets/img/nonVeg.png" alt="vegICon" width="18px" height="18px">
         <div class="decription">
-          <h4>{{item.name}}</h4>
-          <p>{{item.description}}</p>
-          <div @click="dialog()" class="cutomize">
-            <h5 @click="getAddOns(item)">CUSTOMIZE </h5>
+          <h4 class="mdc-typography--subtitle1">{{getItem(id).name}}</h4>
+          <p class="mdc-typography--caption">{{getItem(id).description}}</p>
+          <!-- <div @click="dialog()" class="cutomize">
+            <h5 @click="getAddOns(getItem(id))">CUSTOMIZE </h5>
             <i class="material-icons">keyboard_arrow_down</i>
-          </div>
+          </div> -->
         </div>
         <div class="quantity">
-          <span class="removeItem" @click="itemCounter(item,'remove')">-</span>
-          <span class="qty">{{item.qty}}</span>
-          <span class="addItem" @click="itemCounter(item,'add')">+</span>
+          <span class="removeItem" @click="itemCounter(id, 'remove')">-</span>
+          <span class="qty">{{size}}</span>
+          <span class="addItem" @click="itemCounter(id,'add')">+</span>
         </div>
-        <h5 class="price">&#8377;{{ item.total}}</h5>
+        <h5 class="price">&#8377;{{ getItemTotal(id)}}</h5>
       </div>
+    </div>
+    <hr />
+    <div class="total-row-1"><span class="mdc-typography--body2">Subtotal</span><span class="mdc-typography--button">{{ subtotal }}</span></div>
+    <div class="total-row-1"><span class="mdc-typography--body2">Delivery Charges</span><span class="mdc-typography--button">{{ delivery }}</span></div>
+    <div class="total-row-1"><span class="mdc-typography--body2">Packaging Charges</span><span class="mdc-typography--button">{{ packaging }}</span></div>
+    <hr />
+    <div class="total-row-1"><span class="mdc-typography--body1">Total</span><span class="mdc-typography--button">{{ total }}</span></div>
+
+    <div class="checkout-button">
+      <button class="mdc-button mdc-button--raised">Checkout</button>
     </div>
   </div>
 </template>
 
 <script>
-import CartItems from '../models/CartItems'
-import FoodItems from '../models/FoodItems'
-import Users from '../models/Users'
-import AddOns from '../models/AddOns'
 
 export default {
-  name: 'cart',
+  name: 'lcart',
+  props: ['lcart', 'lfoodItems', 'itemCounter'],
   data: function () {
     return {
       items: [],
@@ -87,15 +116,40 @@ export default {
       showDialog: false
     };
   },
+  mounted () {
+    const slider = window.mdc.slider.MDCSlider.attachTo(document.querySelector('.mdc-slider'));
+    slider.listen('MDCSlider:change', () => console.log(`Value changed to ${slider.value}`));
+  },
+  computed: {
+    subtotal () {
+      var _total = 0
+      for (var i in this.cart) {
+        _total += this.getItemTotal(i)
+      }
+      return _total
+    },
+    delivery () {
+      return 50
+    },
+    packaging () {
+      return 20
+    },
+    total () {
+      return this.subtotal + this.delivery + this.packaging
+    }
+  },
   methods: {
-    itemCounter: function (item, operation) {
-      if (operation === 'add') {
-        item.qty++;
-        item.total += item.price
-      } else {
-        if (item.qty != 0) {
-          item.qty--;
-          item.total -= item.price
+    getItemTotal (id) {
+      for (var i=0; i<this.lfoodItems.length; i++) {
+        if (this.lfoodItems[i].id === id) {
+          return this.lfoodItems[i].price * this.lcart[id]
+        }
+      }
+    },
+    getItem (id) {
+      for (var i=0; i<this.lfoodItems.length; i++) {
+        if (this.lfoodItems[i].id === id) {
+          return this.lfoodItems[i]
         }
       }
     },
@@ -139,93 +193,29 @@ export default {
         }
       }
     }
-  },
-  mounted() {
-    var list = []
-    window.firebase.auth().onAuthStateChanged(function (firestoreUser) {
-      if (firestoreUser) {
-        const users = new Users(firestoreUser.uid)
-        users.getUser(window.firebase.firestore).then((data) => {
-
-          if ('cartId' in data) {
-            new CartItems().getCartById(window.firebase.firestore, data.cartId).then(cartData => {
-
-              new FoodItems().getItems(window.firebase.firestore).then(foodData => {
-
-                foodData.forEach(foodItem => {
-
-                  cartData['items'].forEach(cartItem => {
-
-                    if (foodItem.id == cartItem.id) {
-                      foodItem.qty = cartItem.quantity
-                      foodItem.total = foodItem.price
-                      list.push(foodItem)
-                    }
-                  })
-                })
-
-                new AddOns().getAddOns(window.firebase.firestore).then(itemAddOns => {
-
-                  for (let i = 0; i < list.length; i++) {
-                    itemAddOns.forEach(addOn => {
-
-                      if (list[i].id == addOn.itemId) {
-                        list[i].addOns = addOn.items
-                      }
-                    })
-                  }
-                })
-              })
-            })
-          } else {
-            console.log('cart is empty')
-          }
-        })
-      } else {
-        this.$router.replace('/login')
-      }
-      this.items = list
-      console.log(this.items)
-    }.bind(this))
   }
 }
 </script>
 
 <style scoped>
-.toolbar {
-  height: 56px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-right: 16px;
-  padding-left: 16px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background-color: #ff8f00;
-  background-image: url('../assets/bg3.png');
-  z-index: 1000;
-}
-
-.toolbar i {
-  padding: 10px;
-  color: rgba(0, 0, 0, 0.5);
-}
-
-.toolbar img {
-  height: 26px;
-  padding: 10px 16px;
-}
-
 .orderList {
-  margin-top: 56px;
+  padding: 0 16px 16px 16px;
 }
-
+#cart {
+  background: #efefef;
+  position: relative;
+  z-index: 0;
+  padding-bottom: 40px;
+}
+#cart h2 {
+  margin: 0 16px;
+}
 .item {
   display: flex;
-  justify-content: space-between;
-  padding: 8px;
+  margin: 16px 0;
+  border-radius: 6px;
+  padding: 16px;
+  flex-direction: row;
 }
 
 .decription p {
@@ -239,8 +229,9 @@ export default {
 .decription h5,
 h4 {
   margin: 0;
-  padding-bottom: 4px;
-  color: #616161
+  padding-bottom: 16px;
+  color: #616161;
+  line-height: 18px;
 }
 
 .decription {
@@ -253,7 +244,6 @@ h4 {
 }
 
 .decription p {
-  font-size: 16px;
   margin-bottom: 2px;
 }
 
@@ -350,8 +340,11 @@ h4 {
   margin-top: 4px;
 }
 
-span {
-  font-size: 13px;
+.total-row-1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 16px;
 }
 
 hr {
@@ -415,5 +408,12 @@ hr {
   flex-wrap: wrap;
   text-align: right;
   letter-spacing: 0.8px;
+}
+
+.checkout-button button {
+  width: 80%;
+  margin: 24px auto;
+  display: block;
+  color: #fff;
 }
 </style>
