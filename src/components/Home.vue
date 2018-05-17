@@ -39,7 +39,7 @@
             </div>
             <div>
               <div class="lcart-modifier">
-                <div class="lcart-qty mdc-typography--headline4">{{ lcart[item.id] }}</div>
+                <div class="lcart-qty mdc-typography--headline4">{{ cart[item.id] }}</div>
                 <div>
                   <button><i class="material-icons" @click="addToCart(item.id)">add</i></button>
                   <button><i class="material-icons" @click="removeFromCart(item.id)">remove</i></button>
@@ -50,74 +50,6 @@
         </div>
       </div>
     </div>
-
-    <!-- <div class="itemList">
-      <div id="item">
-        <div v-for="(cat, j) in category" :key="j">
-
-          <div v-for="(subcat, i) in subcategory[cat]" :key="i">
-            <h2 style="margin: 8px 0" class="mdc-typography--headline6">{{subcat.subcategory}}</h2>
-
-            <div v-if="subcat.showVeg">
-              <div v-for="(item,m) in items" :key="m">
-                <div class="itemContainer" v-if="item.isVeg && item.subcategory === subcat.subcategory">
-                  <img src="../assets/img/veg.png" alt="vegICon" width="18px" height="18px">
-                  <div class="itemDetails">
-                    <h4 class="mdc-typography--headline6">{{item.name}}</h4>
-                    <h5>&#8377;{{item.price}}</h5>
-                    <p>{{item.description}}</p>
-                  </div>
-
-                  <div class="quantity">
-                    <div>
-                      <button class="itemQty">
-                        <b>{{item.qty}}</b>
-                      </button>
-                    </div>
-                    <button class="removeBtn" @click="updateMyCart(item,'remove')">
-                      <b>-</b>
-                    </button>
-
-                    <button class="addBtn" @click="updateMyCart(item,'add')">
-                      <b>+</b>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-            <div v-if="subcat.showNonVeg">
-            <div v-for="(item,n) in items" :key="n">
-              <div class="itemContainer" v-if="!item.isVeg && item.subcategory === subcat.subcategory">
-                <img src="../assets/img/nonVeg.png" alt="nonVegICon" width="18px" height="18px">
-                <div class="itemDetails">
-                  <h4 class="mdc-typography--headline4">{{item.name}}</h4>
-                  <h5>&#8377;{{item.price}}</h5>
-                  <p>{{item.description}}</p>
-                </div>
-
-                <div class="quantity">
-                  <div>
-                    <button class="itemQty">
-                      <b>{{item.qty}}</b>
-                    </button>
-                  </div>
-                  <button class="removeBtn" v-on:click="updateMyCart(item,'remove')">
-                    <b>-</b>
-                  </button>
-                  <button class="addBtn"  v-on:click="updateMyCart(item,'add')">
-                    <b>+</b>
-                  </button>
-                </div>
-              </div>
-            </div>
-              <div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> -->
   </div>
 </template>
 
@@ -125,7 +57,7 @@
 
 export default {
   name: 'item',
-  props: ['lfoodItems', 'lcart', 'addToCart', 'removeFromCart'],
+  props: ['addToCart', 'removeFromCart'],
   data: function () {
     return {
       items: {}
@@ -134,7 +66,7 @@ export default {
   watch: {
     lfoodItems () {
       let _items = {}
-      this.lfoodItems.forEach(item => {
+      this.foodItems.forEach(item => {
         if (_items[item.category] === undefined) _items[item.category] = {[item.subcategory]: [item]}
         else if (_items[item.category][item.subcategory] === undefined) _items[item.category][item.subcategory] = [item]
         else _items[item.category][item.subcategory].push(item)
@@ -144,7 +76,7 @@ export default {
   },
   mounted () {
     let _items = {}
-      this.lfoodItems.forEach(item => {
+      this.foodItems.forEach(item => {
         if (_items[item.category] === undefined) _items[item.category] = {[item.subcategory]: [item]}
         else if (_items[item.category][item.subcategory] === undefined) _items[item.category][item.subcategory] = [item]
         else _items[item.category][item.subcategory].push(item)

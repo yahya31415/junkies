@@ -72,7 +72,7 @@
     </div> -->
 
     <div class="orderList">
-      <div class="item mdc-card" v-for="(size,id) in lcart" :key="id">
+      <div class="item mdc-card" v-for="(size,id) in cart" :key="id">
         <img v-if="getItem(id).isVeg" src="../assets/img/veg.png" alt="vegICon" width="18px" height="18px">
         <img v-if="!getItem(id).isVeg" src="../assets/img/nonVeg.png" alt="vegICon" width="18px" height="18px">
         <div class="decription">
@@ -84,22 +84,22 @@
           </div> -->
         </div>
         <div class="quantity">
-          <span class="removeItem" @click="itemCounter(id, 'remove')">-</span>
+          <span class="removeItem" @click="removeFromCart(id)">-</span>
           <span class="qty">{{size}}</span>
-          <span class="addItem" @click="itemCounter(id,'add')">+</span>
+          <span class="addItem" @click="addToCart(id)">+</span>
         </div>
         <h5 class="price">&#8377;{{ getItemTotal(id)}}</h5>
       </div>
     </div>
     <hr />
-    <div class="total-row-1"><span class="mdc-typography--body2">Subtotal</span><span class="mdc-typography--button">{{ subtotal }}</span></div>
-    <div class="total-row-1"><span class="mdc-typography--body2">Delivery Charges</span><span class="mdc-typography--button">{{ delivery }}</span></div>
-    <div class="total-row-1"><span class="mdc-typography--body2">Packaging Charges</span><span class="mdc-typography--button">{{ packaging }}</span></div>
+    <div class="total-row-1"><span class="mdc-typography--body2">Subtotal</span><span class="mdc-typography--button">&#8377; {{ subtotal }}</span></div>
+    <div class="total-row-1"><span class="mdc-typography--body2">Delivery Charges</span><span class="mdc-typography--button">&#8377; {{ delivery }}</span></div>
+    <div class="total-row-1"><span class="mdc-typography--body2">Packaging Charges</span><span class="mdc-typography--button">&#8377; {{ packaging }}</span></div>
     <hr />
-    <div class="total-row-1"><span class="mdc-typography--body1">Total</span><span class="mdc-typography--button">{{ total }}</span></div>
+    <div class="total-row-1"><span class="mdc-typography--body1">Total</span><span class="mdc-typography--button">&#8377; {{ total }}</span></div>
 
     <div class="checkout-button">
-      <button class="mdc-button mdc-button--raised">Checkout</button>
+      <router-link to="/checkout" class="mdc-button mdc-button--raised">Checkout</router-link>
     </div>
   </div>
 </template>
@@ -108,7 +108,7 @@
 
 export default {
   name: 'lcart',
-  props: ['lcart', 'lfoodItems', 'itemCounter'],
+  props: ['subtotal', 'delivery', 'packaging', 'total', 'getItemTotal', 'addToCart', 'removeFromCart'],
   data: function () {
     return {
       items: [],
@@ -120,36 +120,12 @@ export default {
     const slider = window.mdc.slider.MDCSlider.attachTo(document.querySelector('.mdc-slider'));
     slider.listen('MDCSlider:change', () => console.log(`Value changed to ${slider.value}`));
   },
-  computed: {
-    subtotal () {
-      var _total = 0
-      for (var i in this.cart) {
-        _total += this.getItemTotal(i)
-      }
-      return _total
-    },
-    delivery () {
-      return 50
-    },
-    packaging () {
-      return 20
-    },
-    total () {
-      return this.subtotal + this.delivery + this.packaging
-    }
-  },
+
   methods: {
-    getItemTotal (id) {
-      for (var i=0; i<this.lfoodItems.length; i++) {
-        if (this.lfoodItems[i].id === id) {
-          return this.lfoodItems[i].price * this.lcart[id]
-        }
-      }
-    },
     getItem (id) {
-      for (var i=0; i<this.lfoodItems.length; i++) {
-        if (this.lfoodItems[i].id === id) {
-          return this.lfoodItems[i]
+      for (var i=0; i<this.foodItems.length; i++) {
+        if (this.foodItems[i].id === id) {
+          return this.foodItems[i]
         }
       }
     },
@@ -410,10 +386,12 @@ hr {
   letter-spacing: 0.8px;
 }
 
-.checkout-button button {
+.checkout-button a {
   width: 80%;
   margin: 24px auto;
   display: block;
   color: #fff;
+  text-align: center;
+    line-height: 36px;
 }
 </style>

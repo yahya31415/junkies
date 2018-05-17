@@ -7,7 +7,8 @@ import persistentState from 'vue-persistent-state';
 
 let initialState = {
   foodItems: [],
-  cart: {}
+  cart: {},
+  user: null
 };
 
 Vue.use(persistentState, initialState);

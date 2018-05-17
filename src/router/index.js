@@ -4,7 +4,7 @@ import Router from 'vue-router'
 import Home from '@/components/Home'
 import Cart from '@/components/Cart'
 import Login from '@/components/Login'
-
+import Checkout from '@/components/Checkout'
 // import FoodItem from '../models/FoodItem'
 
 Vue.use(Router)
@@ -20,6 +20,11 @@ export default new Router({
       path: '/cart',
       name: 'Cart',
       component: Cart
+    },
+    {
+      path: '/checkout',
+      name: 'Checkout',
+      component: Checkout
     },
     {
       path: '/login',

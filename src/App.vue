@@ -16,7 +16,7 @@
       </div>
     </header>
     <main>
-      <router-view :lfoodItems="foodItems" :lcart="cart" :addToCart="addToCart" :removeFromCart="removeFromCart" :itemCounter="itemCounter"></router-view>
+      <router-view :addToCart="addToCart" :removeFromCart="removeFromCart" :subtotal="subtotal" :delivery="delivery" :packaging="packaging" :total="total" :getItemTotal="getItemTotal"></router-view>
     </main>
   </div>
 </template>
@@ -26,6 +26,13 @@ import FoodItems from './models/FoodItems';
 export default {
   name: 'app',
   methods: {
+    getItemTotal (id) {
+      for (var i=0; i<this.foodItems.length; i++) {
+        if (this.foodItems[i].id === id) {
+          return this.foodItems[i].price * this.cart[id]
+        }
+      }
+    },
     goToCart () {
 
     },
@@ -52,6 +59,24 @@ export default {
           this.cart = cart
         }
       }
+    }
+  },
+  computed: {
+    subtotal () {
+      var _total = 0
+      for (var i in this.cart) {
+        _total += this.getItemTotal(i)
+      }
+      return _total
+    },
+    delivery () {
+      return 50
+    },
+    packaging () {
+      return 20
+    },
+    total () {
+      return this.subtotal + this.delivery + this.packaging
     }
   },
   mounted () {
