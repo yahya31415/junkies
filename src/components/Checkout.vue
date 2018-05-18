@@ -1,5 +1,5 @@
 <template>
-  <div id="checkout">
+  <div id="checkout" v-if="user">
 
     <div id="location" v-if="showLocationDialog">
       <div id="appbar"></div>
@@ -47,11 +47,19 @@
       <button class="mdc-button" @click="showLocationDialog = true">{{ address.length > 0 && location !== null ? address : 'Pick from map' }}</button>
     </div>
 
+    <button id="pay_button" class="mdc-button mdc-button--raised" @click="pay">PAY</button>
+
+  </div>
+  <div v-else>
+    <Login />
   </div>
 </template>
 
-<<script>
+<script>
+import Login from './Login'
+
   export default {
+    components: {Login},
     data () {
       return {
         showLocationDialog: false,
@@ -60,15 +68,46 @@
         clMarker: null,
         location: null,
         address: '',
-        geocoder: null
+        geocoder: null,
+        rzp: null
       }
     },
     props: ['total'],
+    methods: {
+      pay () {
+        // Razorpay
+        var options = {
+            "key": "rzp_test_2HNo9r0SKKUfUC",
+            "amount": this.total * 100, // 2000 paise = INR 20
+            "name": "Cafemoto",
+            "description": "Midnight Online Store",
+            "image": "/static/logo.png",
+            "handler": function (response){
+                window.firebase.firestore().collection("Confirmed Orders").add({
+                  phone: window.firebase.auth().currentUser.phoneNumber,
+                  location: this.location,
+                  address: this.address,
+                  items: this.cart,
+                  total: this.total,
+                  razorpayResponse: response
+                }).then(() => {
+                  this.$router.replace('/order_progress')
+                })
+            }.bind(this),
+            "theme": {
+                "color": "#ff8f00"
+            }
+        };
+        this.rzp = new window.Razorpay(options);
+        this.rzp.open()
+      }
+    },
     watch: {
       showLocationDialog () {
         if (this.showLocationDialog) {
           window.setTimeout(() => {
             window.navigator.geolocation.getCurrentPosition(position => {
+              this.location = {lat: position.coords.latitude, lng: position.coords.longitude}
               this.map = new window.google.maps.Map(document.getElementById('map'), {
                 center: {lat: position.coords.latitude, lng: position.coords.longitude},
                 zoom: 17
@@ -108,6 +147,10 @@
     mounted () {
       const slider = window.mdc.slider.MDCSlider.attachTo(document.querySelector('.mdc-slider'));
       slider.listen('MDCSlider:change', () => console.log(`Value changed to ${slider.value}`));
+
+      var height = window.innerHeight
+      document.querySelector('#checkout').style.minHeight = height + 'px'
+
     },
   }
 </script>
@@ -173,6 +216,14 @@
   margin: auto;
   position: relative;
   top: -120px;
+  display: block;
+  color: #fff;
+}
+
+#pay_button {
+  margin: 32px 16px;
+  width: calc(100% - 32px);
+  box-sizing: border-box;
   display: block;
   color: #fff;
 }

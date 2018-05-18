@@ -87,6 +87,10 @@ export default {
     _getFoodItems.then(foodItems => {
       this.foodItems = foodItems
     })
+
+    window.firebase.auth().onAuthStateChanged(user => {
+      this.user = user.uid;
+    })
   }
 }
 </script>
