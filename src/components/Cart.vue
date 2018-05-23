@@ -19,7 +19,7 @@
       </div>
     </div>
 
-    <h2 class="mdc-typography--headline6">Cart</h2>
+    <h2 class="mdc-typography--headline4">Cart</h2>
 
     <!-- <section class="toolbar">
       <router-link to="/">
@@ -72,8 +72,24 @@
     </div> -->
 
     <div class="orderList">
-      <div class="item mdc-card" v-for="(size,id) in cart" :key="id">
-        <img v-if="getItem(id).isVeg" src="../assets/img/veg.png" alt="vegICon" width="18px" height="18px">
+      <div class="item mdc-card" v-for="(size,id) in cart" :key="id" :veg="getItem(id).isVeg">
+
+        <div>
+              <span class="mdc-typography--subtitle1 food-name" style="font-family: 'Open Sans', sans-serif !important;">{{getItem(id).name}}</span>
+              <span class="mdc-typography--caption food-desc" style="font-family: 'Open Sans', sans-serif !important;">{{getItem(id).description}}</span>
+              <span class="mdc-typography--subtitle2 food-price" style="font-family: 'Open Sans', sans-serif !important;">&#8377; {{getItem(id).price}}</span>
+            </div>
+            <div>
+              <div class="lcart-modifier">
+                <div v-if="size > 0" class="lcart-qty mdc-typography--headline6 mdc-theme--primary">{{ size }}</div>
+                <div>
+                  <button><i class="material-icons" @click="removeFromCart(id)">remove</i></button>
+                  <button><i class="material-icons" @click="addToCart(id)">add</i></button>
+                </div>
+              </div>
+            </div>
+
+        <!-- <img v-if="getItem(id).isVeg" src="../assets/img/veg.png" alt="vegICon" width="18px" height="18px">
         <img v-if="!getItem(id).isVeg" src="../assets/img/nonVeg.png" alt="vegICon" width="18px" height="18px">
         <div class="decription">
           <h4 class="mdc-typography--subtitle1">{{getItem(id).name}}</h4>
@@ -81,14 +97,14 @@
           <!-- <div @click="dialog()" class="cutomize">
             <h5 @click="getAddOns(getItem(id))">CUSTOMIZE </h5>
             <i class="material-icons">keyboard_arrow_down</i>
-          </div> -->
+          </div> --
         </div>
         <div class="quantity">
           <span class="removeItem" @click="removeFromCart(id)">-</span>
           <span class="qty">{{size}}</span>
           <span class="addItem" @click="addToCart(id)">+</span>
         </div>
-        <h5 class="price">&#8377;{{ getItemTotal(id)}}</h5>
+        <h5 class="price">&#8377;{{ getItemTotal(id)}}</h5> -->
       </div>
     </div>
     <hr />
@@ -175,13 +191,13 @@ export default {
 
 <style scoped>
 .orderList {
-  padding: 0 16px 16px 16px;
+  padding: 0 0px 0px 0px;
 }
 #cart {
   background: #efefef;
   position: relative;
   z-index: 0;
-  padding-bottom: 40px;
+  padding-bottom: 60px;
 }
 #cart h2 {
   margin: 0 16px;
@@ -189,10 +205,72 @@ export default {
 }
 .item {
   display: flex;
-  margin: 16px 0;
-  border-radius: 6px;
-  padding: 16px;
   flex-direction: row;
+  justify-content: space-between;
+  margin: 12px 16px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  background: #fff;
+  border-left: solid 8px #FF5252;
+  color: #000;
+}
+
+.item[veg] {
+  border-left: solid 8px #69F0AE;
+}
+.item > div > span {
+  display: block;
+}
+.food-name {
+  text-transform: uppercase;
+  font-weight: 800;
+  padding-bottom: 12px;
+}
+.item > div:first-child {
+  padding-right: 16px;
+}
+.food-price {
+  padding-top: 12px;
+  font-weight: 900;
+}
+.lcart-qty {
+  border-radius: 24px;
+  height: 48px;
+  width: 48px;
+  background: #efefef;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.lcart-modifier {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+}
+.lcart-modifier > div:last-child {
+  display: flex;
+}
+.lcart-modifier button {
+  background: none;
+  border: solid 2px rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.5);
+  border-radius: 100%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 4px;
+}
+.lcart-modifier button:last-child {
+  color: #000;
+  border: solid 2px rgba(0, 0, 0, 1);
+}
+.lcart-modifier i {
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .decription p {
@@ -397,7 +475,9 @@ hr {
   text-align: center;
     line-height: 36px;
 }
-
+.mdc-slider__track {
+  background-color: var(--mdc-theme-primary) !important;
+}
 #cart div {
   font-family: 'Open Sans', sans-serif !important;
   font-weight: 800;

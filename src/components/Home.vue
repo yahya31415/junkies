@@ -39,7 +39,7 @@
             </div>
             <div>
               <div class="lcart-modifier">
-                <div class="lcart-qty mdc-typography--headline4 mdc-theme--secondary">{{ cart[item.id] }}</div>
+                <div v-if="cart[item.id] > 0" class="lcart-qty mdc-typography--headline6 mdc-theme--primary">{{ cart[item.id] }}</div>
                 <div>
                   <button><i class="material-icons" @click="removeFromCart(item.id)">remove</i></button>
                   <button><i class="material-icons" @click="addToCart(item.id)">add</i></button>
@@ -100,25 +100,29 @@ export default {
   height: 80px;
   display: flex;
   align-items: flex-end;
-  padding-left: 72px;
   padding-bottom: 8px;
   box-sizing: border-box;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.9);
 }
 .title h4 {
   margin: 0;
+    text-align: center;
+    width: 100%;
   font-family: 'Arvo', serif;
   font-weight: 700;
+  font-size: 40px;
 }
 .subtitle {
   height: 72px;
   color: rgba(255, 255, 255, 0.7);
-  padding-left: 76px;
+  text-align: center;
   box-sizing: border-box;
 }
 
 .subtitle span {
   font-family: 'Open Sans', sans-serif !important;
+  display: block;
+  width: 100%;
 }
 
 #home {
@@ -214,11 +218,12 @@ export default {
   margin: 12px 16px;
   padding: 12px 16px;
   border-radius: 6px;
-  background: #FF5252;
+  background: #fff;
+  border-left: solid 8px #FF5252;
   color: #000;
 }
 .foodItem[veg] {
-  background: #69F0AE;
+  border-left: solid 8px #69F0AE;
 }
 .food-name {
   text-transform: uppercase;
@@ -232,6 +237,15 @@ export default {
   padding-top: 12px;
   font-weight: 900;
 }
+.lcart-qty {
+  border-radius: 24px;
+  height: 48px;
+  width: 48px;
+  background: #efefef;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .lcart-modifier {
   display: flex;
   flex-direction: column;
@@ -244,8 +258,8 @@ export default {
 }
 .lcart-modifier button {
   background: none;
-  border: solid 2px rgba(255, 255, 255, 0.5);
-  color: rgba(255, 255, 255, 0.5);
+  border: solid 2px rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.5);
   border-radius: 100%;
   width: 24px;
   height: 24px;
@@ -255,8 +269,8 @@ export default {
   margin: 4px;
 }
 .lcart-modifier button:last-child {
-  color: #fff;
-  border: solid 2px rgba(255, 255, 255, 1);
+  color: #000;
+  border: solid 2px rgba(0, 0, 0, 1);
 }
 .lcart-modifier i {
   font-size: 16px;

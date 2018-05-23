@@ -1,24 +1,52 @@
 <template>
   <div id="app">
-    <header class="mdc-top-app-bar mdc-top-app-bar--fixed">
-      <div class="mdc-top-app-bar__row">
-        <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-          <a href="#" class="material-icons mdc-top-app-bar__navigation-icon">menu</a>
-        </section>
-        <section class="mdc-top-app-bar__section">
-          <span class="mdc-top-app-bar__title"><img src="./assets/logo.png" height="24" alt=""></span>
-        </section>
-        <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
-          <span v-if="Object.keys(cart).length > 0">{{ Object.keys(cart).length }}</span>
-          <router-link to="/cart" class="material-icons mdc-top-app-bar__action-item" aria-label="Cart" alt="Cart" :style="Object.keys(cart).length > 0 ? 'color: rgba(255,255,255,0.7)' : ''">shopping_cart</router-link>
-          <!-- <router-link to="/profile" class="material-icons mdc-top-app-bar__action-item" aria-label="Profile" alt="Profile">account_circle</router-link>
-          <a href="#" @click="signOut" class="material-icons mdc-top-app-bar__action-item" aria-label="Sign Out" alt="Sign Out">exit_to_app</a> -->
-        </section>
-      </div>
-    </header>
-    <main>
-      <router-view :addToCart="addToCart" :removeFromCart="removeFromCart" :subtotal="subtotal" :delivery="delivery" :packaging="packaging" :total="total" :getItemTotal="getItemTotal"></router-view>
-    </main>
+    <aside class="mdc-drawer mdc-drawer--persistent mdc-typography mdc-elevation--z10">
+      <nav class="mdc-drawer__drawer">
+        <header class="mdc-drawer__header">
+          <div class="mdc-drawer__header-content">
+            <img src="/static/img/icons/android-chrome-512x512.png" alt="" height="160">
+          </div>
+        </header>
+        <nav id="icon-with-text-demo" class="mdc-drawer__content mdc-list">
+          <router-link :class="'mdc-list-item' + ($route.path === '/' ? ' mdc-list-item--activated' : '')" to="/">
+            <i class="material-icons mdc-list-item__graphic" aria-hidden="true">shopping_cart</i>Order
+          </router-link>
+          <router-link v-if="user" :class="'mdc-list-item' + ($route.path === '/history' ? ' mdc-list-item--activated' : '')" to="/history">
+            <i class="material-icons mdc-list-item__graphic" aria-hidden="true">history</i>History
+          </router-link>
+          <router-link v-if="user" :class="'mdc-list-item' + ($route.path === '/profile' ? ' mdc-list-item--activated' : '')" to="/profile">
+            <i class="material-icons mdc-list-item__graphic" aria-hidden="true">person</i>Profile
+          </router-link>
+          <a v-if="user" :class="'mdc-list-item'" href="#">
+            <i class="material-icons mdc-list-item__graphic" aria-hidden="true">exit_to_app</i>Sign Out
+          </a>
+          <router-link v-if="!user" :class="'mdc-list-item' + ($route.path === '/login' ? ' mdc-list-item--activated' : '')" to="/login">
+            <i class="material-icons mdc-list-item__graphic" aria-hidden="true">person</i>Login
+          </router-link>
+        </nav>
+      </nav>
+    </aside>
+    <div>
+      <header class="mdc-top-app-bar mdc-top-app-bar--fixed">
+        <div class="mdc-top-app-bar__row">
+          <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+            <a href="#" class="material-icons mdc-top-app-bar__navigation-icon menu">menu</a>
+          </section>
+          <section class="mdc-top-app-bar__section">
+            <span class="mdc-top-app-bar__title"><img src="./assets/logo2.png" height="28" alt=""></span>
+          </section>
+          <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
+            <span v-if="Object.keys(cart).length > 0">{{ Object.keys(cart).length }}</span>
+            <router-link to="/cart" class="material-icons mdc-top-app-bar__action-item" aria-label="Cart" alt="Cart" :style="Object.keys(cart).length > 0 ? 'color: rgba(255,255,255,0.7)' : 'color: rgba(0, 0, 0,0.7)'">shopping_cart</router-link>
+            <!-- <router-link to="/profile" class="material-icons mdc-top-app-bar__action-item" aria-label="Profile" alt="Profile">account_circle</router-link>
+            <a href="#" @click="signOut" class="material-icons mdc-top-app-bar__action-item" aria-label="Sign Out" alt="Sign Out">exit_to_app</a> -->
+          </section>
+        </div>
+      </header>
+      <main>
+        <router-view :addToCart="addToCart" :removeFromCart="removeFromCart" :subtotal="subtotal" :delivery="delivery" :packaging="packaging" :total="total" :getItemTotal="getItemTotal"></router-view>
+      </main>
+    </div>
   </div>
 </template>
 
@@ -83,6 +111,9 @@ export default {
   mounted () {
     window.mdc.topAppBar.MDCTopAppBar.attachTo(document.querySelector('.mdc-top-app-bar'));
 
+    let drawer = new window.mdc.drawer.MDCPersistentDrawer(document.querySelector('.mdc-drawer--persistent'));
+    document.querySelector('.menu').addEventListener('click', () => drawer.open = !drawer.open);
+
     // get Food Items
     let _getFoodItems = new FoodItems(window.firebase.firestore)
     _getFoodItems.then(foodItems => {
@@ -90,7 +121,7 @@ export default {
     })
 
     window.firebase.auth().onAuthStateChanged(user => {
-      this.user = user.uid;
+      this.user = user ? user.uid : null;
     })
   }
 }
@@ -111,7 +142,7 @@ html,body {
     --mdc-theme-on-primary: #fff;
     --mdc-theme-on-secondary: #0097A7;
     --mdc-theme-on-surface: #000;
-    --mdc-theme-text-primary-on-background: rgba(255,255,255,.54);
+    --mdc-theme-text-primary-on-background: rgba(0,0,0,.54);
     --mdc-theme-text-secondary-on-background: rgba(0,0,0,.54);
     --mdc-theme-text-hint-on-background: rgba(0,0,0,.38);
     --mdc-theme-text-disabled-on-background: rgba(0,0,0,.38);
@@ -153,5 +184,19 @@ html,body {
 }
 main {
   padding-top: 56px;
+  width: 100%;
+}
+#app {
+  display: flex;
+}
+#app > div {
+  width: 100%;
+}
+.mdc-drawer header {
+  height: 180px;
+}
+.mdc-drawer header > div {
+  flex-direction: column;
+  align-items: center !important;
 }
 </style>

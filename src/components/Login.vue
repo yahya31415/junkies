@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="appbar">
-      <section class="toolbar">
+    <div class="appbar mdc-elevation--z4">
+      <!-- <section class="toolbar">
         <div class="left">
           <i class="material-icons">keyboard_backspace</i>
         </div>
@@ -10,7 +10,7 @@
             <i class="material-icons nextBtn">navigate_next</i>
           </a>
         </div>
-      </section>
+      </section> -->
       <section class="title">
         <h5>{{ mainmsg }}</h5>
       </section>
@@ -48,7 +48,11 @@
           </i>
         </span>
         <span class="ripple" @click="getNumber('0')">0</span>
-        <span class="ripple"></span>
+        <span class="ripple" @click="login">
+          <i class="material-icons">
+            chevron_right
+          </i>
+        </span>
       </div>
     </div>
     <!-- <div id="firebaseui-auth-container"></div> -->
@@ -137,10 +141,10 @@ export default {
 <style scoped>
 .appbar {
   width: auto;
-  height: 110px;
-  background-color: #ff8f00;
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
-  padding-top: 56px;
+  height: 80px;
+  background-color: var(--mdc-theme-primary);
+  padding-top: 18px;
+  padding-bottom: 18px;
   background-image: url('../assets/bg3.png');
 }
 .toolbar {
@@ -177,8 +181,7 @@ export default {
   padding-left: 16px;
   box-sizing: border-box;
   font-size: 24px;
-  color: rgba(0, 0, 0, 0.5);
-  text-shadow: 0px 0px 16px rgba(0,0,0,0.2);
+  color: #fff;
 }
 .title h5 {
   margin: 8px 0;
@@ -186,10 +189,9 @@ export default {
 .subtitle {
   height: 72px;
   font-size: 16px;
-  color: rgba(0, 0, 0, 0.8);
+  color: rgba(255, 255, 255, 0.8);
   padding-left: 16px;
   box-sizing: border-box;
-  text-shadow: 0px 0px 16px rgba(0,0,0,0.2);
 }
 .numpad div {
   display: flex;

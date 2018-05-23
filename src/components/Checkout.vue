@@ -35,7 +35,7 @@
       </div>
     </div>
 
-    <h2 class="mdc-typography--headline6">Checkout</h2>
+    <h2 class="mdc-typography--headline4">Checkout</h2>
 
     <div class="mdc-card d-flex">
       <span>Cash to be paid</span>
@@ -164,7 +164,8 @@ import Login from './Login'
   padding-bottom: 40px;
 }
 #checkout h2 {
-  margin: 0 16px;
+    margin: 0 16px;
+  font-family: 'Open Sans', sans-serif !important;
 }
 .d-flex {
   display: flex;
@@ -176,6 +177,10 @@ import Login from './Login'
   margin: 16px;
   padding: 16px;
   border-radius: 6px;
+  background: #fff;
+}
+.mdc-slider__track {
+  background-color: var(--mdc-theme-primary) !important;
 }
 #location {
   position: fixed;
