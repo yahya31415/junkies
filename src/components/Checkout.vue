@@ -89,13 +89,14 @@ import Login from './Login'
                   address: this.address,
                   items: this.cart,
                   total: this.total,
+                  timestamp: new Date(),
                   razorpayResponse: response
                 }).then(() => {
                   this.$router.replace('/order_progress')
                 })
             }.bind(this),
             "theme": {
-                "color": "#ff8f00"
+                "color": "#0097A7"
             }
         };
         this.rzp = new window.Razorpay(options);

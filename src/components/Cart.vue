@@ -185,6 +185,7 @@ export default {
 }
 #cart h2 {
   margin: 0 16px;
+  font-family: 'Open Sans', sans-serif !important;
 }
 .item {
   display: flex;
@@ -196,6 +197,7 @@ export default {
 
 .decription p {
   font-size: 13px;
+  font-family: 'Open Sans', sans-serif !important;
   word-break: break-word;
   margin: 0;
   padding-bottom: 4px;
@@ -208,6 +210,7 @@ h4 {
   padding-bottom: 16px;
   color: #616161;
   line-height: 18px;
+  font-family: 'Open Sans', sans-serif !important;
 }
 
 .decription {
@@ -393,5 +396,10 @@ hr {
   color: #fff;
   text-align: center;
     line-height: 36px;
+}
+
+#cart div {
+  font-family: 'Open Sans', sans-serif !important;
+  font-weight: 800;
 }
 </style>

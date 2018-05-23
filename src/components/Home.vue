@@ -4,10 +4,10 @@
     <!-- App bar -->
     <div class="appbar mdc-elevation--z4">
       <div class="title">
-        <h4 class="mdc-typography--headline4">Cafemoto</h4>
+        <h4 class="mdc-typography--headline4">junkies</h4>
       </div>
       <div class="subtitle">
-        <span class="mdc-typography--headline6">Midnight online store</span>
+        <span class="mdc-typography--headline6">midnight online store</span>
       </div>
     </div>
 
@@ -30,19 +30,19 @@
       <div v-for="(subcategories, category) in items" :key="category">
         <span class="mdc-typography--headline4 food-category">{{category}}</span>
         <div v-for="(items, subcategory) in subcategories" :key="subcategory">
-          <span class="mdc-typography--overline food-subcategory">{{subcategory}}</span>
+          <span class="mdc-typography--headline6 food-subcategory">{{subcategory}}</span>
           <div v-for="(item, i) in items" :key="i" class="foodItem mdc-card" :veg="item.isVeg">
             <div>
-              <span class="mdc-typography--subtitle1 food-name">{{item.name}}</span>
-              <span class="mdc-typography--caption food-desc">{{item.description}}</span>
-              <span class="mdc-typography--subtitle2 food-price">&#8377; {{item.price}}</span>
+              <span class="mdc-typography--subtitle1 food-name" style="font-family: 'Open Sans', sans-serif !important;">{{item.name}}</span>
+              <span class="mdc-typography--caption food-desc" style="font-family: 'Open Sans', sans-serif !important;">{{item.description}}</span>
+              <span class="mdc-typography--subtitle2 food-price" style="font-family: 'Open Sans', sans-serif !important;">&#8377; {{item.price}}</span>
             </div>
             <div>
               <div class="lcart-modifier">
-                <div class="lcart-qty mdc-typography--headline4">{{ cart[item.id] }}</div>
+                <div class="lcart-qty mdc-typography--headline4 mdc-theme--secondary">{{ cart[item.id] }}</div>
                 <div>
-                  <button><i class="material-icons" @click="addToCart(item.id)">add</i></button>
                   <button><i class="material-icons" @click="removeFromCart(item.id)">remove</i></button>
+                  <button><i class="material-icons" @click="addToCart(item.id)">add</i></button>
                 </div>
               </div>
             </div>
@@ -89,10 +89,11 @@ export default {
 
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css?family=Arvo:700');
 .appbar {
   width: auto;
   height: 160px;
-  background-color: #ff8f00;
+  background-color: var(--mdc-theme-primary);
   background-image: url('../assets/bg3.png');
 }
 .title {
@@ -102,16 +103,22 @@ export default {
   padding-left: 72px;
   padding-bottom: 8px;
   box-sizing: border-box;
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(255, 255, 255, 0.7);
 }
 .title h4 {
   margin: 0;
+  font-family: 'Arvo', serif;
+  font-weight: 700;
 }
 .subtitle {
   height: 72px;
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(255, 255, 255, 0.7);
   padding-left: 76px;
   box-sizing: border-box;
+}
+
+.subtitle span {
+  font-family: 'Open Sans', sans-serif !important;
 }
 
 #home {
@@ -180,20 +187,22 @@ export default {
 }
 
 .lfoodItems {
-  padding-top: 16px;
+  padding-top: 8px;
 }
 .lfoodItems > div {
-  padding: 16px 0;
+  padding: 8px 0;
 }
 .lfoodItems > div > div {
   padding: 16px 0;
 }
 .food-category {
   padding-left: 16px;
+  font-family: 'Open Sans', sans-serif !important;
 }
 .food-subcategory {
-  padding-left: 16px;
-  font-weight: bold;
+  padding-left: 20px;
+  font-weight: 800;
+  font-family: 'Open Sans', sans-serif !important;
 }
 .lfoodItems > div > div > div span {
   display: block;
@@ -205,9 +214,16 @@ export default {
   margin: 12px 16px;
   padding: 12px 16px;
   border-radius: 6px;
+  background: #FF5252;
+  color: #000;
 }
 .foodItem[veg] {
-  border-left: solid 8px green;
+  background: #69F0AE;
+}
+.food-name {
+  text-transform: uppercase;
+  font-weight: 800;
+  padding-bottom: 12px;
 }
 .foodItem > div:first-child {
   padding-right: 16px;
@@ -228,7 +244,8 @@ export default {
 }
 .lcart-modifier button {
   background: none;
-  border: solid 2px #000;
+  border: solid 2px rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.5);
   border-radius: 100%;
   width: 24px;
   height: 24px;
@@ -236,6 +253,10 @@ export default {
   justify-content: center;
   align-items: center;
   margin: 4px;
+}
+.lcart-modifier button:last-child {
+  color: #fff;
+  border: solid 2px rgba(255, 255, 255, 1);
 }
 .lcart-modifier i {
   font-size: 16px;

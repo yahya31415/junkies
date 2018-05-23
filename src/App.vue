@@ -9,7 +9,8 @@
           <span class="mdc-top-app-bar__title"><img src="./assets/logo.png" height="24" alt=""></span>
         </section>
         <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
-          <router-link to="/cart" class="material-icons mdc-top-app-bar__action-item" aria-label="Cart" alt="Cart">shopping_cart</router-link>
+          <span v-if="Object.keys(cart).length > 0">{{ Object.keys(cart).length }}</span>
+          <router-link to="/cart" class="material-icons mdc-top-app-bar__action-item" aria-label="Cart" alt="Cart" :style="Object.keys(cart).length > 0 ? 'color: rgba(255,255,255,0.7)' : ''">shopping_cart</router-link>
           <!-- <router-link to="/profile" class="material-icons mdc-top-app-bar__action-item" aria-label="Profile" alt="Profile">account_circle</router-link>
           <a href="#" @click="signOut" class="material-icons mdc-top-app-bar__action-item" aria-label="Sign Out" alt="Sign Out">exit_to_app</a> -->
         </section>
@@ -98,19 +99,19 @@ export default {
 <style>
 html,body {
   margin: 0;
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Open Sans', sans-serif !important;
   width: 100%;
   overflow-x: hidden;
 }
 :root {
-    --mdc-theme-primary: #ff8f00;
-    --mdc-theme-secondary: #000;
+    --mdc-theme-primary: #0097A7;
+    --mdc-theme-secondary: #fff;
     --mdc-theme-background: #fff;
-    --mdc-theme-surface: #fff;
-    --mdc-theme-on-primary: rgba(0,0,0,0.5);
-    --mdc-theme-on-secondary: #fff;
+    --mdc-theme-surface: #0097A7;
+    --mdc-theme-on-primary: #fff;
+    --mdc-theme-on-secondary: #0097A7;
     --mdc-theme-on-surface: #000;
-    --mdc-theme-text-primary-on-background: rgba(0,0,0,.87);
+    --mdc-theme-text-primary-on-background: rgba(255,255,255,.54);
     --mdc-theme-text-secondary-on-background: rgba(0,0,0,.54);
     --mdc-theme-text-hint-on-background: rgba(0,0,0,.38);
     --mdc-theme-text-disabled-on-background: rgba(0,0,0,.38);
@@ -139,6 +140,16 @@ html,body {
 }
 .mdc-slider:not(.mdc-slider--disabled) .mdc-slider__track-container {
     background-color: rgba(0,0,0,.1);
+}
+.mdc-top-app-bar__section--align-end > span {
+  background: #fff;
+  color: var(--mdc-theme-primary);
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 24px;
 }
 main {
   padding-top: 56px;
