@@ -1,6 +1,21 @@
 <template>
   <div id="home">
 
+    <!-- menu shortcut -->
+    <button class="mdc-button mdc-button--raised mdc-elevation--z12 menu-button">Menu</button>
+    <div class="mdc-menu mdc-elevation--z16" tabindex="-1">
+      <ul class="mdc-menu__items mdc-list" role="menu" aria-hidden="true">
+        <span v-for="(subcategories, category) in items" :key="category">
+          <li class="mdc-list-item" role="menuitem" tabindex="0" @click="goto(category)" style="color: var(--mdc-theme-primary);">
+            {{ category }}
+          </li>
+          <li class="mdc-list-item" role="menuitem" tabindex="0"  v-for="(items, subcategory) in subcategories" :key="subcategory" @click="goto(subcategory)" style="color: #000;">
+            {{ subcategory }}
+          </li>
+        </span>
+      </ul>
+    </div>
+
     <!-- App bar -->
     <div class="appbar mdc-elevation--z4">
       <div class="title">
@@ -27,9 +42,9 @@
     </div>
 
     <div class="lfoodItems">
-      <div v-for="(subcategories, category) in items" :key="category">
+      <div v-for="(subcategories, category) in items" :key="category" :id="category.replace(' ', '_')">
         <span class="mdc-typography--headline4 food-category">{{category}}</span>
-        <div v-for="(items, subcategory) in subcategories" :key="subcategory">
+        <div v-for="(items, subcategory) in subcategories" :key="subcategory" :id="subcategory.replace(' ', '_')">
           <span class="mdc-typography--headline6 food-subcategory">{{subcategory}}</span>
           <div v-for="(item, i) in items" :key="i" class="foodItem mdc-card" :veg="item.isVeg">
             <div>
@@ -63,6 +78,15 @@ export default {
       items: {}
     };
   },
+  methods: {
+    goto (id) {
+      window.scroll({
+        top: document.querySelector('#' + id.replace(' ', '_')).offsetTop - 60,
+        left: 0,
+        behavior: 'smooth'
+      })
+    }
+  },
   watch: {
     lfoodItems () {
       let _items = {}
@@ -82,6 +106,28 @@ export default {
         else _items[item.category][item.subcategory].push(item)
       })
       this.items = _items
+
+      // Instantiation
+      var menuEl = document.querySelector('.mdc-menu');
+      var menu = new window.mdc.menu.MDCMenu(menuEl);
+      var menuButtonEl = document.querySelector('.menu-button');
+
+      // Toggle menu open
+      menuButtonEl.addEventListener('click', function() {
+        menu.open = !menu.open;
+      });
+
+      // Listen for selected item
+      menuEl.addEventListener('MDCMenu:selected', function(evt) {
+        var detail = evt.detail;
+        console.log(detail)
+      });
+
+      // Set Anchor Corner to Bottom End
+      // menu.setAnchorCorner(window.mdc.menu.Corner.TOP_END);
+
+      // Turn off menu open animations
+      menu.quickOpen = true;
   }
 };
 
@@ -90,6 +136,26 @@ export default {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css?family=Arvo:700');
+.menu-button {
+  position: fixed;
+  bottom: 16px;
+  width: 100px;
+  height: 48px;
+  left: calc(50% - 50px);
+  border-radius: 24px;
+  font-weight: 800;
+  font-family: 'Open Sans', sans-serif;
+}
+.mdc-menu {
+  position: fixed;
+  bottom: 72px;
+  left: calc(50% - 85px);
+  box-shadow: 0 8px 10px -5px rgba(0,0,0,.2), 0 16px 24px 2px rgba(0,0,0,.14), 0 6px 30px 5px rgba(0,0,0,.12);
+  color: #000;
+  max-height: 300px;
+  overflow-y: auto;
+  border-radius: 6px;
+}
 .appbar {
   width: auto;
   height: 160px;

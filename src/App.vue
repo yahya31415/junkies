@@ -33,7 +33,11 @@
             <a href="#" class="material-icons mdc-top-app-bar__navigation-icon menu">menu</a>
           </section>
           <section class="mdc-top-app-bar__section">
-            <span class="mdc-top-app-bar__title"><img src="./assets/logo2.png" height="28" alt=""></span>
+            <span class="mdc-top-app-bar__title">
+              <router-link to="/" style="display: inline-flex;">
+                <img src="./assets/logo2.png" height="28" alt="">
+              </router-link>
+            </span>
           </section>
           <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
             <span v-if="Object.keys(cart).length > 0">{{ Object.keys(cart).length }}</span>

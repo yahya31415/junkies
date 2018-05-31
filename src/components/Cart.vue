@@ -76,8 +76,8 @@
 
         <div>
               <span class="mdc-typography--subtitle1 food-name" style="font-family: 'Open Sans', sans-serif !important;">{{getItem(id).name}}</span>
-              <span class="mdc-typography--caption food-desc" style="font-family: 'Open Sans', sans-serif !important;">{{getItem(id).description}}</span>
-              <span class="mdc-typography--subtitle2 food-price" style="font-family: 'Open Sans', sans-serif !important;">&#8377; {{getItem(id).price}}</span>
+              <!-- <span class="mdc-typography--caption food-desc" style="font-family: 'Open Sans', sans-serif !important;">{{getItem(id).description}}</span> -->
+              <span class="mdc-typography--subtitle2 food-price" style="font-family: 'Open Sans', sans-serif !important;">&#8377; {{getItem(id).price}} x {{ size }} = {{ getItem(id).price * size }}</span>
             </div>
             <div>
               <div class="lcart-modifier">
