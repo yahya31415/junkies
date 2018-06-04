@@ -1,6 +1,28 @@
 <template>
   <div id="checkout" v-if="user">
-
+    <aside id="cod-mdc-dialog"
+      class="mdc-dialog"
+      role="alertdialog"
+      aria-labelledby="approve-mdc-dialog-label"
+      aria-describedby="approve-mdc-dialog-description">
+      <div class="mdc-dialog__surface">
+        <header class="mdc-dialog__header">
+          <h2 id="my-mdc-dialog-label" class="mdc-dialog__header__title">
+            Confirm Order
+          </h2>
+        </header>
+        <section id="approve-mdc-dialog-description" class="mdc-dialog__body">
+          <div>
+            Are you sure you want to place this order?
+          </div>
+        </section>
+        <footer class="mdc-dialog__footer">
+          <button type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--cancel">CANCEL</button>
+          <button type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--accept accept-button">YES</button>
+        </footer>
+      </div>
+      <div class="mdc-dialog__backdrop"></div>
+    </aside>
     <div id="location" v-if="showLocationDialog">
       <div id="appbar"></div>
       <div id="map-container">
@@ -47,7 +69,10 @@
       <button class="mdc-button" @click="showLocationDialog = true">{{ address.length > 0 && location !== null ? address : 'Pick from map' }}</button>
     </div>
 
-    <button id="pay_button" class="mdc-button mdc-button--raised" @click="pay">PAY</button>
+    <div style="display: flex;">
+      <button id="pay_button" class="mdc-button mdc-button--raised" @click="cod">CASH ON DELIVERY</button>
+      <button id="pay_button" class="mdc-button mdc-button--raised" @click="pay">PAY ONLINE</button>
+    </div>
 
   </div>
   <div v-else>
@@ -69,11 +94,36 @@ import Login from './Login'
         location: null,
         address: '',
         geocoder: null,
-        rzp: null
+        rzp: null,
+        dialog: null
       }
     },
     props: ['total'],
     methods: {
+      cod () {
+        this.dialog = new window.mdc.dialog.MDCDialog(document.querySelector('#cod-mdc-dialog'))
+
+        this.dialog.listen('MDCDialog:accept', function () {
+          window.firebase.firestore().collection("Confirmed Orders").add({
+            phone: window.firebase.auth().currentUser.phoneNumber,
+            location: this.location,
+            address: this.address,
+            items: this.cart,
+            total: this.total,
+            timestamp: new Date(),
+            razorpayResponse: null,
+            isCOD: true
+          }).then((doc) => {
+            this.$router.replace('/order_progress/' + doc.id)
+          })
+        }.bind(this))
+
+        this.dialog.listen('MDCDialog:cancel', function () {
+          console.log('canceled')
+        })
+
+        this.dialog.show()
+      },
       pay () {
         // Razorpay
         var options = {
@@ -131,7 +181,7 @@ import Login from './Login'
                 this.address = result[0].formatted_address
               })
               window.google.maps.event.addListener(this.map, 'drag', () => {
-                this.location = this.map.getCenter()
+                this.location = JSON.parse(JSON.stringify(this.map.getCenter()))
                 this.marker.setPosition(this.map.getCenter()) // set marker position to map center
                 // updatePosition(this.getCenter().lat(), this.getCenter().lng()); // update position display
               });
