@@ -13,28 +13,47 @@
           <div class="mdc-slider__pin">
             <span class="mdc-slider__pin-value-marker"></span>
           </div>
-          <svg class="mdc-slider__thumb" width="21" height="21">
+          <!-- <svg class="mdc-slider__thumb" width="21" height="21">
             <circle cx="10.5" cy="10.5" r="7.875"></circle>
-          </svg>
+          </svg> -->
           <div class="mdc-slider__focus-ring"></div>
         </div>
       </div>
       <div>
         <div class="state">
           <input type="checkbox" id="payment" disabled :checked="true">
+          <div>
           <h3>{{ order.isCOD ? 'Order Received' : 'Payment Received' }}</h3>
+          <p>Order is received and waiting for confirmation</p>
+          </div>
         </div>
         <div class="state">
           <input type="checkbox" id="kitchen" disabled :checked="order.confirmed">
+          <div>
           <h3>In the kitchen</h3>
+          <p>Order is confirmed</p>
+          </div>
         </div>
         <div class="state">
           <input type="checkbox" id="ontheway" disabled :checked="order.dispatched">
+          <div>
           <h3>On the way </h3>
+          <div class="dispatched">
+          <p>Your order is dispatched <br>
+          <span v-if="driver != null">
+          Order will be delivered by <b>{{driver.displayName}}</b>
+          </span>
+           </p>
+          <i class="material-icons" @click="callDriver()">call</i>
+          </div>
+          </div>
         </div>
         <div class="state">
           <input type="checkbox" id="delivered" disabled :checked="order.delivered">
+          <div>
           <h3>Delivered </h3>
+          <p>Order is successfully delivered</p>
+          </div>
         </div>
       </div>
     </div>
@@ -54,6 +73,11 @@
         order: null,
         driver: null,
         driversLocation: null
+      }
+    },
+    methods: {
+      callDriver: function(){
+        window.open("tel:" + this.driver.phoneNumber)
       }
     },
     mounted() {
@@ -182,11 +206,29 @@
 
   .state h3 {
     color: #616161;
-    margin: 8px;
+    margin: 0px 8px;
+  }
+
+  .state p {
+    color: #969696;
+    margin: 0 8px 16px 8px;
   }
 
   input[type="checkbox"] {
     margin: 16px 8px;
+  }
+
+  .dispatched {
+    display: flex;
+  }
+
+  .dispatched p {
+    width: auto;
+  }
+
+  .dispatched i {
+    height: 40px;
+    padding: 8px;
   }
 
 </style>
