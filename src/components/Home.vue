@@ -1,13 +1,28 @@
 <template>
   <div id="home">
 
+    <!-- menu shortcut -->
+    <button class="mdc-button mdc-button--raised mdc-elevation--z12 menu-button">Menu</button>
+    <div class="mdc-menu mdc-elevation--z16" tabindex="-1">
+      <ul class="mdc-menu__items mdc-list" role="menu" aria-hidden="true">
+        <span v-for="(subcategories, category) in items" :key="category">
+          <li class="mdc-list-item" role="menuitem" tabindex="0" @click="goto(category)" style="color: var(--mdc-theme-primary);">
+            {{ category }}
+          </li>
+          <li class="mdc-list-item" role="menuitem" tabindex="0"  v-for="(items, subcategory) in subcategories" :key="subcategory" @click="goto(subcategory)" style="color: #000;">
+            {{ subcategory }}
+          </li>
+        </span>
+      </ul>
+    </div>
+
     <!-- App bar -->
     <div class="appbar mdc-elevation--z4">
       <div class="title">
-        <h4 class="mdc-typography--headline4">Cafemoto</h4>
+        <h4 class="mdc-typography--headline4">junkies</h4>
       </div>
       <div class="subtitle">
-        <span class="mdc-typography--headline6">Midnight online store</span>
+        <span class="mdc-typography--headline6">midnight online store</span>
       </div>
     </div>
 
@@ -27,22 +42,22 @@
     </div>
 
     <div class="lfoodItems">
-      <div v-for="(subcategories, category) in items" :key="category">
+      <div v-for="(subcategories, category) in items" :key="category" :id="category.replace(' ', '_')">
         <span class="mdc-typography--headline4 food-category">{{category}}</span>
-        <div v-for="(items, subcategory) in subcategories" :key="subcategory">
-          <span class="mdc-typography--overline food-subcategory">{{subcategory}}</span>
+        <div v-for="(items, subcategory) in subcategories" :key="subcategory" :id="subcategory.replace(' ', '_')">
+          <span class="mdc-typography--headline6 food-subcategory">{{subcategory}}</span>
           <div v-for="(item, i) in items" :key="i" class="foodItem mdc-card" :veg="item.isVeg">
             <div>
-              <span class="mdc-typography--subtitle1 food-name">{{item.name}}</span>
-              <span class="mdc-typography--caption food-desc">{{item.description}}</span>
-              <span class="mdc-typography--subtitle2 food-price">&#8377; {{item.price}}</span>
+              <span class="mdc-typography--subtitle1 food-name" style="font-family: 'Open Sans', sans-serif !important;">{{item.name}}</span>
+              <span class="mdc-typography--caption food-desc" style="font-family: 'Open Sans', sans-serif !important;">{{item.description}}</span>
+              <span class="mdc-typography--subtitle2 food-price" style="font-family: 'Open Sans', sans-serif !important;">&#8377; {{item.price}}</span>
             </div>
             <div>
               <div class="lcart-modifier">
-                <div class="lcart-qty mdc-typography--headline4">{{ cart[item.id] }}</div>
+                <div v-if="cart[item.id] > 0" class="lcart-qty mdc-typography--headline6 mdc-theme--primary">{{ cart[item.id] }}</div>
                 <div>
-                  <button><i class="material-icons" @click="addToCart(item.id)">add</i></button>
                   <button><i class="material-icons" @click="removeFromCart(item.id)">remove</i></button>
+                  <button><i class="material-icons" @click="addToCart(item.id)">add</i></button>
                 </div>
               </div>
             </div>
@@ -63,6 +78,15 @@ export default {
       items: {}
     };
   },
+  methods: {
+    goto (id) {
+      window.scroll({
+        top: document.querySelector('#' + id.replace(' ', '_')).offsetTop - 60,
+        left: 0,
+        behavior: 'smooth'
+      })
+    }
+  },
   watch: {
     lfoodItems () {
       let _items = {}
@@ -82,6 +106,28 @@ export default {
         else _items[item.category][item.subcategory].push(item)
       })
       this.items = _items
+
+      // Instantiation
+      var menuEl = document.querySelector('.mdc-menu');
+      var menu = new window.mdc.menu.MDCMenu(menuEl);
+      var menuButtonEl = document.querySelector('.menu-button');
+
+      // Toggle menu open
+      menuButtonEl.addEventListener('click', function() {
+        menu.open = !menu.open;
+      });
+
+      // Listen for selected item
+      menuEl.addEventListener('MDCMenu:selected', function(evt) {
+        var detail = evt.detail;
+        console.log(detail)
+      });
+
+      // Set Anchor Corner to Bottom End
+      // menu.setAnchorCorner(window.mdc.menu.Corner.TOP_END);
+
+      // Turn off menu open animations
+      menu.quickOpen = true;
   }
 };
 
@@ -89,29 +135,60 @@ export default {
 
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css?family=Arvo:700');
+.menu-button {
+  position: fixed;
+  bottom: 16px;
+  width: 100px;
+  height: 48px;
+  left: calc(50% - 50px);
+  border-radius: 24px;
+  font-weight: 800;
+  font-family: 'Open Sans', sans-serif;
+}
+.mdc-menu {
+  position: fixed;
+  bottom: 72px;
+  left: calc(50% - 85px);
+  box-shadow: 0 8px 10px -5px rgba(0,0,0,.2), 0 16px 24px 2px rgba(0,0,0,.14), 0 6px 30px 5px rgba(0,0,0,.12);
+  color: #000;
+  max-height: 300px;
+  overflow-y: auto;
+  border-radius: 6px;
+}
 .appbar {
   width: auto;
   height: 160px;
-  background-color: #ff8f00;
+  background-color: var(--mdc-theme-primary);
   background-image: url('../assets/bg3.png');
 }
 .title {
   height: 80px;
   display: flex;
   align-items: flex-end;
-  padding-left: 72px;
   padding-bottom: 8px;
   box-sizing: border-box;
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(255, 255, 255, 0.9);
 }
 .title h4 {
   margin: 0;
+    text-align: center;
+    width: 100%;
+  font-family: 'Arvo', serif;
+  font-weight: 700;
+  font-size: 40px;
 }
 .subtitle {
   height: 72px;
-  color: rgba(0, 0, 0, 0.5);
-  padding-left: 76px;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
   box-sizing: border-box;
+}
+
+.subtitle span {
+  font-family: 'Open Sans', sans-serif !important;
+  display: block;
+  width: 100%;
 }
 
 #home {
@@ -180,20 +257,22 @@ export default {
 }
 
 .lfoodItems {
-  padding-top: 16px;
+  padding-top: 8px;
 }
 .lfoodItems > div {
-  padding: 16px 0;
+  padding: 8px 0;
 }
 .lfoodItems > div > div {
   padding: 16px 0;
 }
 .food-category {
   padding-left: 16px;
+  font-family: 'Open Sans', sans-serif !important;
 }
 .food-subcategory {
-  padding-left: 16px;
-  font-weight: bold;
+  padding-left: 20px;
+  font-weight: 800;
+  font-family: 'Open Sans', sans-serif !important;
 }
 .lfoodItems > div > div > div span {
   display: block;
@@ -205,9 +284,17 @@ export default {
   margin: 12px 16px;
   padding: 12px 16px;
   border-radius: 6px;
+  background: #fff;
+  border-left: solid 8px #FF5252;
+  color: #000;
 }
 .foodItem[veg] {
-  border-left: solid 8px green;
+  border-left: solid 8px #69F0AE;
+}
+.food-name {
+  text-transform: uppercase;
+  font-weight: 800;
+  padding-bottom: 12px;
 }
 .foodItem > div:first-child {
   padding-right: 16px;
@@ -215,6 +302,15 @@ export default {
 .food-price {
   padding-top: 12px;
   font-weight: 900;
+}
+.lcart-qty {
+  border-radius: 24px;
+  height: 48px;
+  width: 48px;
+  background: #efefef;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .lcart-modifier {
   display: flex;
@@ -228,7 +324,8 @@ export default {
 }
 .lcart-modifier button {
   background: none;
-  border: solid 2px #000;
+  border: solid 2px rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.5);
   border-radius: 100%;
   width: 24px;
   height: 24px;
@@ -236,6 +333,10 @@ export default {
   justify-content: center;
   align-items: center;
   margin: 4px;
+}
+.lcart-modifier button:last-child {
+  color: #000;
+  border: solid 2px rgba(0, 0, 0, 1);
 }
 .lcart-modifier i {
   font-size: 16px;
