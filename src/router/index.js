@@ -5,7 +5,7 @@ import Home from '@/components/Home'
 import Cart from '@/components/Cart'
 import Login from '@/components/Login'
 import Checkout from '@/components/Checkout'
-// import FoodItem from '../models/FoodItem'
+import order_progress from '@/components/order_progress'
 
 Vue.use(Router)
 
@@ -30,6 +30,11 @@ export default new Router({
       path: '/login',
       name: 'Login',
       component: Login
+    },
+    {
+      path: '/order_progress/:id',
+      name: 'Order Progress',
+      component: order_progress
     }
   ]
 })

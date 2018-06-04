@@ -141,8 +141,8 @@ import Login from './Login'
                   total: this.total,
                   timestamp: new Date(),
                   razorpayResponse: response
-                }).then(() => {
-                  this.$router.replace('/order_progress')
+                }).then((doc) => {
+                  this.$router.replace('/order_progress/'+ doc.id)
                 })
             }.bind(this),
             "theme": {
