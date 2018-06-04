@@ -90,8 +90,8 @@ import Login from './Login'
                   items: this.cart,
                   total: this.total,
                   razorpayResponse: response
-                }).then(() => {
-                  this.$router.replace('/order_progress')
+                }).then((doc) => {
+                  this.$router.replace('/order_progress/'+ doc.id)
                 })
             }.bind(this),
             "theme": {
