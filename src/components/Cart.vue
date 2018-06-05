@@ -94,10 +94,10 @@
         <div class="decription">
           <h4 class="mdc-typography--subtitle1">{{getItem(id).name}}</h4>
           <p class="mdc-typography--caption">{{getItem(id).description}}</p>
-          <!-- <div @click="dialog()" class="cutomize">
+          <div @click="dialog()" class="cutomize">
             <h5 @click="getAddOns(getItem(id))">CUSTOMIZE </h5>
             <i class="material-icons">keyboard_arrow_down</i>
-          </div> --
+          </div> 
         </div>
         <div class="quantity">
           <span class="removeItem" @click="removeFromCart(id)">-</span>

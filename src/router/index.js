@@ -6,6 +6,7 @@ import Cart from '@/components/Cart'
 import Login from '@/components/Login'
 import Checkout from '@/components/Checkout'
 import order_progress from '@/components/order_progress'
+import OrderHistory from '@/components/History'
 
 Vue.use(Router)
 
@@ -35,6 +36,11 @@ export default new Router({
       path: '/order_progress/:id',
       name: 'Order Progress',
       component: order_progress
+    },
+    {
+      path: '/history',
+      name: 'OrderHistory',
+      component: OrderHistory
     }
   ]
 })
