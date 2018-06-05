@@ -1,0 +1,27 @@
+[debug] [2018-06-05T14:28:47.649Z] ----------------------------------------------------------------------
+[debug] [2018-06-05T14:28:47.651Z] Command:       /usr/bin/node /usr/bin/firebase deploy --only hosting
+[debug] [2018-06-05T14:28:47.651Z] CLI Version:   3.18.4
+[debug] [2018-06-05T14:28:47.652Z] Platform:      linux
+[debug] [2018-06-05T14:28:47.652Z] Node Version:  v8.11.1
+[debug] [2018-06-05T14:28:47.652Z] Time:          Tue Jun 05 2018 19:58:47 GMT+0530 (DST)
+[debug] [2018-06-05T14:28:47.652Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-06-05T14:28:47.694Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-06-05T14:28:47.694Z] > authorizing via signed-in user
+[debug] [2018-06-05T14:28:47.696Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-06-05T14:28:47.697Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ { refresh_token: '1/2m_nc3FNhl8QIaFdBL0t3aKkgYuHlU5oqN1-2lCfv3Q',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Tue Jun 05 2018 19:58:47 GMT+0530 (DST)
+[debug] [2018-06-05T14:28:53.040Z] <<< HTTP RESPONSE 200
+[debug] [2018-06-05T14:28:53.051Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/cafemoto-in  
+  
+ Tue Jun 05 2018 19:58:53 GMT+0530 (DST)
+[debug] [2018-06-05T14:28:54.227Z] <<< HTTP RESPONSE 200
+[debug] [2018-06-05T14:28:54.228Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/cafemoto-in/tokens  
+  
+ Tue Jun 05 2018 19:58:54 GMT+0530 (DST)
+[debug] [2018-06-05T14:28:55.383Z] <<< HTTP RESPONSE 200
