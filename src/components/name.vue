@@ -21,40 +21,11 @@
 
     <div class="userInput">
       <!-- <img v-if="!codeSent" src="../assets/img/india.png" alt="flag" width="24px"> -->
-      <span v-if="!codeSent">&nbsp; +91 &nbsp;&nbsp;</span>
-      <input id="phone" type="text" v-model="phoneNumber" :placeholder="!codeSent ? 'Phone Number' : 'Verification Code'">
+      <span>Full Name: </span>
+      <input id="phone" type="text" v-model="name">
     </div>
-    <div id="sign-in-button"></div>
-    <div class="numpad" v-if="!waiting">
-      <div>
-        <span class="ripple" @click="getNumber('1')">1</span>
-        <span class="ripple" @click="getNumber('2')">2</span>
-        <span class="ripple" @click="getNumber('3')">3</span>
-      </div>
-      <div>
-        <span class="ripple" @click="getNumber('4')">4</span>
-        <span class="ripple" @click="getNumber('5')">5</span>
-        <span class="ripple" @click="getNumber('6')">6</span>
-      </div>
-      <div>
-        <span class="ripple" @click="getNumber('7')">7</span>
-        <span class="ripple" @click="getNumber('8')">8</span>
-        <span class="ripple" @click="getNumber('9')">9</span>
-      </div>
-      <div>
-        <span class="ripple" @click="backspace()">
-          <i class="material-icons">
-            backspace
-          </i>
-        </span>
-        <span class="ripple" @click="getNumber('0')">0</span>
-        <span class="ripple" @click="login">
-          <i class="material-icons">
-            chevron_right
-          </i>
-        </span>
-      </div>
-    </div>
+    <button class="mdc-button mdc-button--raised" id="sign-in-button" @click="login">Done</button>
+
     <!-- <div id="firebaseui-auth-container"></div> -->
   </div>
 </template>
@@ -64,13 +35,9 @@
 export default {
  data: function () {
     return {
-      phoneNumber: "",
-      confirmationResult: null,
-      recaptchaVerifier: null,
-      mainmsg: 'Enter your phone number',
-      submsg: 'We will send a verification code to your phone',
-      codeSent: false,
-      waiting: false
+      name: '',
+      mainmsg: 'Enter your full name',
+      submsg: 'What would you like us to call you?',
     }
   },
   methods: {
@@ -83,42 +50,13 @@ export default {
       phone.value = this.phoneNumber
     },
     login () {
-      if (this.codeSent) {
-        this.waiting = true
-        this.confirmationResult.confirm(this.phoneNumber).then(function () {
-          this.$router.replace('/cart')
-        }.bind(this)).catch(function (error) {
-          alert(error)
-          this.waiting = false
-        });
-        return
-      }
-      window.firebase.auth().signInWithPhoneNumber("+91"+this.phoneNumber, this.recaptchaVerifier)
-        .then(function (confirmationResult) {
-          // SMS sent. Prompt user to type the code from the message, then sign the
-          // user in with confirmationResult.confirm(code).
-          this.confirmationResult = confirmationResult;
-          this.phoneNumber = ""
-          this.codeSent = true
-          this.mainmsg = 'Enter the verification code'
-        }.bind(this)).catch(function (error) {
-          // Error; SMS not sent
-          // ...
-          console.log(error)
-        })
+      window.firebase.auth().currentUser.updateProfile({displayName: this.name})
+      .then(() => this.$router.replace('/cart'))
     }
   },
   mounted: function () {
-    this.recaptchaVerifier = new window.firebase.auth.RecaptchaVerifier('sign-in-button', {
-      'size': 'invisible',
-      // 'callback': function(response) {
-      //   // reCAPTCHA solved, allow signInWithPhoneNumber.
-      //   onSignInSubmit();
-      // }
-    })
     window.firebase.auth().onAuthStateChanged(function (user) {
       if (user && user.displayName) this.$router.replace('/cart')
-      if (!user.displayName) this.$router.replace('/name')
       else {
         // var ui = new window.firebaseui.auth.AuthUI(window.firebase.auth())
         // ui.start('#firebaseui-auth-container', {
@@ -147,6 +85,11 @@ export default {
   padding-top: 18px;
   padding-bottom: 18px;
   background-image: url('../assets/bg3.png');
+}
+
+.mdc-button {
+  margin: 72px auto;
+  display: block;
 }
 .toolbar {
   height: 56px;

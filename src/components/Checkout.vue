@@ -282,5 +282,6 @@ import Login from './Login'
   box-sizing: border-box;
   display: block;
   color: #fff;
+  height: 56px;
 }
 </style>

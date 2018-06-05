@@ -46,7 +46,7 @@
         <span class="mdc-typography--headline4 food-category">{{category}}</span>
         <div v-for="(items, subcategory) in subcategories" :key="subcategory" :id="subcategory.replace(' ', '_')">
           <span class="mdc-typography--headline6 food-subcategory">{{subcategory}}</span>
-          <div v-for="(item, i) in items" :key="i" class="foodItem mdc-card" :veg="item.isVeg">
+          <div v-for="(item, i) in items" :key="i" v-if="item.inStock" class="foodItem mdc-card" :veg="item.isVeg">
             <div>
               <span class="mdc-typography--subtitle1 food-name" style="font-family: 'Open Sans', sans-serif !important;">{{item.name}}</span>
               <span class="mdc-typography--caption food-desc" style="font-family: 'Open Sans', sans-serif !important;">{{item.description}}</span>
@@ -73,10 +73,16 @@
 export default {
   name: 'item',
   props: ['addToCart', 'removeFromCart'],
-  data: function () {
-    return {
-      items: {}
-    };
+  computed: {
+    items () {
+      let _items = {}
+      this.foodItems.forEach(item => {
+        if (_items[item.category] === undefined) _items[item.category] = {[item.subcategory]: [item]}
+        else if (_items[item.category][item.subcategory] === undefined) _items[item.category][item.subcategory] = [item]
+        else _items[item.category][item.subcategory].push(item)
+      })
+      return _items
+    }
   },
   methods: {
     goto (id) {
@@ -87,26 +93,7 @@ export default {
       })
     }
   },
-  watch: {
-    lfoodItems () {
-      let _items = {}
-      this.foodItems.forEach(item => {
-        if (_items[item.category] === undefined) _items[item.category] = {[item.subcategory]: [item]}
-        else if (_items[item.category][item.subcategory] === undefined) _items[item.category][item.subcategory] = [item]
-        else _items[item.category][item.subcategory].push(item)
-      })
-      this.items = _items
-    }
-  },
   mounted () {
-    let _items = {}
-      this.foodItems.forEach(item => {
-        if (_items[item.category] === undefined) _items[item.category] = {[item.subcategory]: [item]}
-        else if (_items[item.category][item.subcategory] === undefined) _items[item.category][item.subcategory] = [item]
-        else _items[item.category][item.subcategory].push(item)
-      })
-      this.items = _items
-
       // Instantiation
       var menuEl = document.querySelector('.mdc-menu');
       var menu = new window.mdc.menu.MDCMenu(menuEl);

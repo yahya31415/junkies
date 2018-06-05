@@ -4,6 +4,8 @@ import Router from 'vue-router'
 import Home from '@/components/Home'
 import Cart from '@/components/Cart'
 import Login from '@/components/Login'
+import Name from '@/components/name'
+import Profile from '@/components/Profile'
 import Checkout from '@/components/Checkout'
 import order_progress from '@/components/order_progress'
 
@@ -27,9 +29,19 @@ export default new Router({
       component: Checkout
     },
     {
+      path: '/profile',
+      name: 'Profile',
+      component: Profile
+    },
+    {
       path: '/login',
       name: 'Login',
       component: Login
+    },
+    {
+      path: '/name',
+      name: 'Name',
+      component: Name
     },
     {
       path: '/order_progress/:id',

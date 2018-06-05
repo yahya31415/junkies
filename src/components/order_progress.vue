@@ -1,58 +1,45 @@
 <template>
   <div id="location" v-if="order">
     <div id="appbar"></div>
-    <div id="map-container">
+    <div id="map-container" class="mdc-elevation--z6">
       <div id="map"></div>
-      <div class="mdc-slider mdc-slider--discrete mdc-slider--display-markers" tabindex="0" role="slider" aria-valuemin="1" aria-valuemax="4"
-        aria-valuenow="4" aria-label="Checkout" aria-disabled>
-        <div class="mdc-slider__track-container">
-          <div class="mdc-slider__track"></div>
-          <div class="mdc-slider__track-marker-container"></div>
-        </div>
-        <div class="mdc-slider__thumb-container">
-          <div class="mdc-slider__pin">
-            <span class="mdc-slider__pin-value-marker"></span>
-          </div>
-          <!-- <svg class="mdc-slider__thumb" width="21" height="21">
-            <circle cx="10.5" cy="10.5" r="7.875"></circle>
-          </svg> -->
-          <div class="mdc-slider__focus-ring"></div>
-        </div>
-      </div>
       <div>
         <div class="state">
-          <input type="checkbox" id="payment" disabled :checked="true">
+          <i class="material-icons mdc-theme--primary">done</i>
           <div>
-          <h3>{{ order.isCOD ? 'Order Received' : 'Payment Received' }}</h3>
-          <p>Order is received and waiting for confirmation</p>
+            <h3>{{ order.isCOD ? 'Order Received' : 'Payment Received' }}</h3>
+            <p>Order received. Waiting for confirmation</p>
           </div>
         </div>
         <div class="state">
-          <input type="checkbox" id="kitchen" disabled :checked="order.confirmed">
-          <div>
-          <h3>In the kitchen</h3>
-          <p>Order is confirmed</p>
+          <i class="material-icons mdc-theme--primary" v-if="order.confirmed">done</i>
+          <i class="material-icons" v-else style="opacity: 0.4">done_outline</i>
+          <div :style="!order.confirmed ? 'opacity: 0.4' : 'opacity: 1'">
+            <h3>In the kitchen</h3>
+            <p v-if="order.confirmed">Will be delivered {{ remTime }}</p>
           </div>
         </div>
         <div class="state">
-          <input type="checkbox" id="ontheway" disabled :checked="order.dispatched">
-          <div>
-          <h3>On the way </h3>
-          <div class="dispatched">
-          <p>Your order is dispatched <br>
-          <span v-if="driver != null">
-          Order will be delivered by <b>{{driver.displayName}}</b>
-          </span>
-           </p>
-          <i class="material-icons" @click="callDriver()">call</i>
-          </div>
+          <i class="material-icons mdc-theme--primary" v-if="order.dispatched">done</i>
+          <i class="material-icons" v-else style="opacity: 0.4">done_outline</i>
+          <div :style="!order.dispatched ? 'opacity: 0.4' : 'opacity: 1'">
+            <h3>On the way </h3>
+            <div class="dispatched" v-if="order.dispatched">
+              <p>
+                <span v-if="driver != null">
+                  Order will be delivered by
+                  <b @click="callDriver()" class="mdc-theme--primary">{{driver.displayName}}</b>
+                </span>
+              </p>
+            </div>
           </div>
         </div>
         <div class="state">
-          <input type="checkbox" id="delivered" disabled :checked="order.delivered">
-          <div>
-          <h3>Delivered </h3>
-          <p>Order is successfully delivered</p>
+          <i class="material-icons mdc-theme--primary" v-if="order.delivered">done</i>
+          <i class="material-icons" v-else style="opacity: 0.4">done_outline</i>
+          <div :style="!order.delivered ? 'opacity: 0.4' : 'opacity: 1'">
+            <h3>Delivered </h3>
+            <p v-if="order.delivered">Order is successfully delivered</p>
           </div>
         </div>
       </div>
@@ -72,12 +59,18 @@
         clMarker: null,
         order: null,
         driver: null,
-        driversLocation: null
+        driversLocation: null,
+        dr: null
       }
     },
     methods: {
-      callDriver: function(){
+      callDriver: function () {
         window.open("tel:" + this.driver.phoneNumber)
+      }
+    },
+    computed: {
+      remTime () {
+        return window.moment(this.order.timestamp).add(45, 'minutes').fromNow()
       }
     },
     mounted() {
@@ -97,7 +90,7 @@
                 lat: this.order.location.lat,
                 lng: this.order.location.lng
               },
-              zoom: 17
+              zoom: 15
             });
 
             this.clMarker = new window.google.maps.Marker({
@@ -119,17 +112,18 @@
                 .onSnapshot((driver) => {
                   this.driver = driver.data()
 
+                  if (this.marker) this.marker.setMap(null)
                   this.marker = new window.google.maps.Marker({
                     position: {
                       lat: this.driver.location.lat,
                       lng: this.driver.location.lng
                     },
-                    map: this.map
-                    // icon: {
-                    //   url: '/static/icon/blue-dot.png',
-                    //   scaledSize: new window.google.maps.Size(80, 80),
-                    //   anchor: new window.google.maps.Point(40, 40)
-                    // }
+                    map: this.map,
+                    icon: {
+                      url: '/static/icon/scooter.png',
+                      scaledSize: new window.google.maps.Size(40, 40),
+                      anchor: new window.google.maps.Point(20, 20)
+                    }
                   });
 
                   var directionsService = new window.google.maps.DirectionsService();
@@ -145,9 +139,10 @@
                     (response, status) => {
                       console.log(response)
                       if (status == window.google.maps.DirectionsStatus.OK) {
-                        new window.google.maps.DirectionsRenderer({
+                        this.dr = new window.google.maps.DirectionsRenderer({
                           map: this.map,
-                          directions: response
+                          directions: response,
+                          suppressMarkers: true
                         });
                       }
 
@@ -187,12 +182,13 @@
   #map {
     width: 100%;
     height: 100%;
+    margin-bottom: 24px;
   }
 
   #map-container {
     width: 90%;
     padding: 8px;
-    height: 360px;
+    height: 240px;
     margin: auto;
     background: #fff;
     position: relative;
@@ -202,6 +198,8 @@
 
   .state {
     display: flex;
+    align-items: center;
+    margin: 16px 0;
   }
 
   .state h3 {
@@ -214,8 +212,16 @@
     margin: 0 8px 16px 8px;
   }
 
-  input[type="checkbox"] {
-    margin: 16px 8px;
+  .state i {
+    width: 50px;
+    height: 50px;
+    margin: 8px 16px;
+    flex: 0 0 50px;
+    border-radius: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #ccc;
   }
 
   .dispatched {

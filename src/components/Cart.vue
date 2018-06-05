@@ -72,7 +72,7 @@
     </div> -->
 
     <div class="orderList">
-      <div class="item mdc-card" v-for="(size,id) in cart" :key="id" :veg="getItem(id).isVeg">
+      <div class="item" v-for="(size,id) in cart" :key="id" :veg="getItem(id).isVeg">
 
         <div>
               <span class="mdc-typography--subtitle1 food-name" style="font-family: 'Open Sans', sans-serif !important;">{{getItem(id).name}}</span>
@@ -135,6 +135,7 @@ export default {
   mounted () {
     const slider = window.mdc.slider.MDCSlider.attachTo(document.querySelector('.mdc-slider'));
     slider.listen('MDCSlider:change', () => console.log(`Value changed to ${slider.value}`));
+    document.querySelector('#cart').style.minHeight = window.innerHeight + 'px'
   },
 
   methods: {
@@ -200,38 +201,37 @@ export default {
   padding-bottom: 60px;
 }
 #cart h2 {
-  margin: 0 16px;
+  margin: 0 16px 32px 16px;
   font-family: 'Open Sans', sans-serif !important;
 }
 .item {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: 12px 16px;
-  padding: 12px 16px;
+  align-items: center;
+  margin: 12px 16px 16px 16px;
   border-radius: 6px;
-  background: #fff;
-  border-left: solid 8px #FF5252;
-  color: #000;
+  color: solid 8px #FF5252;
+  color: rgba(0, 0, 0, 0.74);
 }
 
-.item[veg] {
+/* .item[veg] {
   border-left: solid 8px #69F0AE;
-}
+} */
 .item > div > span {
   display: block;
 }
 .food-name {
   text-transform: uppercase;
   font-weight: 800;
-  padding-bottom: 12px;
+  padding-bottom: 2px;
 }
 .item > div:first-child {
   padding-right: 16px;
 }
 .food-price {
   padding-top: 12px;
-  font-weight: 900;
+  font-weight: 400;
 }
 .lcart-qty {
   border-radius: 24px;

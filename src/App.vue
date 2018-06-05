@@ -17,7 +17,7 @@
           <router-link v-if="user" :class="'mdc-list-item' + ($route.path === '/profile' ? ' mdc-list-item--activated' : '')" to="/profile">
             <i class="material-icons mdc-list-item__graphic" aria-hidden="true">person</i>Profile
           </router-link>
-          <a v-if="user" :class="'mdc-list-item'" href="#">
+          <a v-if="user" @click="signOut" :class="'mdc-list-item'" href="#">
             <i class="material-icons mdc-list-item__graphic" aria-hidden="true">exit_to_app</i>Sign Out
           </a>
           <router-link v-if="!user" :class="'mdc-list-item' + ($route.path === '/login' ? ' mdc-list-item--activated' : '')" to="/login">
@@ -119,13 +119,20 @@ export default {
     document.querySelector('.menu').addEventListener('click', () => drawer.open = !drawer.open);
 
     // get Food Items
-    let _getFoodItems = new FoodItems(window.firebase.firestore)
-    _getFoodItems.then(foodItems => {
+    let _getFoodItems = new FoodItems(window.firebase.firestore, foodItems => {
       this.foodItems = foodItems
     })
+    console.log(_getFoodItems)
 
     window.firebase.auth().onAuthStateChanged(user => {
       this.user = user ? user.uid : null;
+      this.userProfile = {displayName: user.displayName, phoneNumber: user.phoneNumber}
+    })
+
+    document.querySelector('#app').style.minHeight = window.innerHeight + 'px'
+
+    this.$router.afterEach(() => {
+      drawer.open = false
     })
   }
 }
