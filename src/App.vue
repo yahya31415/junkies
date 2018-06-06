@@ -1,5 +1,5 @@
 <template>
-  <div id="app" v-if="!denied">
+  <div id="app" v-if="open && !denied">
     <aside class="mdc-drawer mdc-drawer--persistent mdc-typography mdc-elevation--z10">
       <nav class="mdc-drawer__drawer">
         <header class="mdc-drawer__header">
@@ -52,8 +52,13 @@
       </main>
     </div>
   </div>
-  <div id="app" v-else style="display: flex; justify-content:center; align-items: center; flex-direction: column; background: #efefef;">
+  <div id="app" v-else-if="!open" style="display: flex; justify-content:center; align-items: center; flex-direction: column; background: #efefef;">
     <i class="material-icons" style="font-size: 240px; color: rgba(0,0,0,0.54)">error</i>
+    <h1 class="mdc-typography mdc-typography--headline2">Closed Now</h1>
+    <p class="mdc-typography mdc-typography--headline6">Opens from 7pm to 5am</p>
+  </div>
+  <div id="app" v-else style="display: flex; justify-content:center; align-items: center; flex-direction: column; background: #efefef;">
+    <i class="material-icons" style="font-size: 240px; color: rgba(0,0,0,0.54)">not_listed_location</i>
     <h1 class="mdc-typography mdc-typography--headline2">Sorry!</h1>
     <p class="mdc-typography mdc-typography--headline6">Currently not delivering to your location</p>
   </div>
@@ -65,7 +70,8 @@ export default {
   name: 'app',
   data () {
     return {
-      denied: false
+      denied: false,
+      open: true
     }
   },
   methods: {
@@ -123,6 +129,10 @@ export default {
     }
   },
   created () {
+    window.firebase.firestore().collection('config').doc('delivery')
+      .onSnapshot(snapshot => {
+        this.open = snapshot.data().open
+      })
     window.navigator.geolocation.getCurrentPosition(position => {
       var service = new window.google.maps.DistanceMatrixService();
       service.getDistanceMatrix(
