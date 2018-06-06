@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" v-if="!denied">
     <aside class="mdc-drawer mdc-drawer--persistent mdc-typography mdc-elevation--z10">
       <nav class="mdc-drawer__drawer">
         <header class="mdc-drawer__header">
@@ -52,12 +52,22 @@
       </main>
     </div>
   </div>
+  <div id="app" v-else style="display: flex; justify-content:center; align-items: center; flex-direction: column; background: #efefef;">
+    <i class="material-icons" style="font-size: 240px; color: rgba(0,0,0,0.54)">error</i>
+    <h1 class="mdc-typography mdc-typography--headline2">Sorry!</h1>
+    <p class="mdc-typography mdc-typography--headline6">Currently not delivering to your location</p>
+  </div>
 </template>
 
 <script>
 import FoodItems from './models/FoodItems';
 export default {
   name: 'app',
+  data () {
+    return {
+      denied: false
+    }
+  },
   methods: {
     getItemTotal (id) {
       for (var i=0; i<this.foodItems.length; i++) {
@@ -111,6 +121,30 @@ export default {
     total () {
       return this.subtotal + this.delivery + this.packaging
     }
+  },
+  created () {
+    window.navigator.geolocation.getCurrentPosition(position => {
+      var service = new window.google.maps.DistanceMatrixService();
+      service.getDistanceMatrix(
+        {
+          origins: [{lat: position.coords.latitude, lng: position.coords.longitude}],
+          destinations: [{lat:  12.937008, lng: 77.614657}],
+          travelMode: 'DRIVING',
+          // transitOptions: TransitOptions,
+          // drivingOptions: DrivingOptions,
+          // unitSystem: UnitSystem,
+          // avoidHighways: Boolean,
+          // avoidTolls: Boolean,
+        }, callback.bind(this));
+
+      function callback(response) {
+        // See Parsing the Results for
+        // the basics of a callback function.
+        if (response.rows[0].elements[0].distance.value > 5000) {
+          this.denied = true
+        }
+      }
+    })
   },
   mounted () {
     window.mdc.topAppBar.MDCTopAppBar.attachTo(document.querySelector('.mdc-top-app-bar'));

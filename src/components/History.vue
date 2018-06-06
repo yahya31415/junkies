@@ -1,13 +1,16 @@
 <template>
     <div class="container">
-       
+
         <div v-for="(order,i) in orders" :key="i" class="row mdc-card" @click="openDetails(order.id)">
             <!-- <div class="col1"> -->
-                <span class="mdc-typography--subtitle2">{{GetFormattedDate(order.timestamp)}} </span> 
-                <span class="items mdc-typography--subtitle1">{{order.itemName.toString().toUpperCase()}} </span>        
+                <span class="mdc-typography--subtitle2">{{GetFormattedDate(order.timestamp)}} </span>
+                <span class="items mdc-typography--subtitle1">{{order.itemName.toString().toUpperCase()}} </span>
                 <span class="mdc-typography--caption"> {{order.address}} </span>
                 <span class="mdc-typography--caption">{{order.isCOD ? "COD Payment" : "Online Payment"}} </span>
                 <span class="total mdc-typography--subtitle2">&#8377; {{order.total}}</span>
+                <span class="total mdc-typography--subtitle2">{{order.delivered ? 'Delivered' : 'Pending'}}</span>
+
+                <router-link :to="'/order_progress/'+order.id" class="mdc-button mdc-button--flat">Track Order</router-link>
             <!-- </div> -->
             <!-- <div class="col2">Delivered</div> -->
         </div>
