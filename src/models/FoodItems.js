@@ -30,7 +30,7 @@ class FoodItem {
 }
 
 export default class FoodItems {
-  constructor(firestore: Object, cb: Function) {
+  onSnapshot(firestore: Object, cb: Function) {
     firestore()
       .collection('FoodItems')
       .orderBy('order')

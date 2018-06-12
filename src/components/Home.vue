@@ -19,10 +19,7 @@
     <!-- App bar -->
     <div class="appbar mdc-elevation--z4">
       <div class="title">
-        <h4 class="mdc-typography--headline4">junkies</h4>
-      </div>
-      <div class="subtitle">
-        <span class="mdc-typography--headline6">midnight online store</span>
+        <img src="../assets/junk-06.png" alt="logo" width="360">
       </div>
     </div>
 
@@ -132,6 +129,7 @@ export default {
   border-radius: 24px;
   font-weight: 800;
   font-family: 'Open Sans', sans-serif;
+  background: var(--mdc-theme-primary);
 }
 .mdc-menu {
   position: fixed;
@@ -146,13 +144,13 @@ export default {
 .appbar {
   width: auto;
   height: 160px;
-  background-color: var(--mdc-theme-primary);
-  background-image: url('../assets/bg3.png');
+  background: linear-gradient(#e06926,#ea3624);
 }
 .title {
-  height: 80px;
+  height: 160px;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
   padding-bottom: 8px;
   box-sizing: border-box;
   color: rgba(255, 255, 255, 0.9);

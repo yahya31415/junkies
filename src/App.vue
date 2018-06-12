@@ -4,7 +4,7 @@
       <nav class="mdc-drawer__drawer">
         <header class="mdc-drawer__header">
           <div class="mdc-drawer__header-content">
-            <img src="/static/img/icons/android-chrome-512x512.png" alt="" height="160">
+            <img src="./assets/junkie-02.png" alt="" height="160">
           </div>
         </header>
         <nav id="icon-with-text-demo" class="mdc-drawer__content mdc-list">
@@ -35,7 +35,7 @@
           <section class="mdc-top-app-bar__section">
             <span class="mdc-top-app-bar__title">
               <router-link to="/" style="display: inline-flex;">
-                <img src="./assets/logo2.png" height="28" alt="">
+                <img src="./assets/junk-03.png" height="28" alt="">
               </router-link>
             </span>
           </section>
@@ -48,97 +48,106 @@
         </div>
       </header>
       <main>
-        <router-view :addToCart="addToCart" :removeFromCart="removeFromCart" :subtotal="subtotal" :delivery="delivery" :packaging="packaging" :total="total" :getItemTotal="getItemTotal"></router-view>
+        <router-view :addToCart="addToCart" :removeFromCart="removeFromCart" :subtotal="subtotal" :delivery="delivery" :packaging="packaging"
+          :total="total" :getItemTotal="getItemTotal"></router-view>
       </main>
     </div>
   </div>
-  <div id="app" v-else-if="!open" style="display: flex; justify-content:center; align-items: center; flex-direction: column; background: #efefef;">
+  <div id="app2" v-else-if="!open" style="display: flex; justify-content:center; align-items: center; flex-direction: column; background: #efefef;">
     <i class="material-icons" style="font-size: 240px; color: rgba(0,0,0,0.54)">error</i>
     <h1 class="mdc-typography mdc-typography--headline2">Closed Now</h1>
     <p class="mdc-typography mdc-typography--headline6">Opens from 7pm to 5am</p>
   </div>
-  <div id="app" v-else style="display: flex; justify-content:center; align-items: center; flex-direction: column; background: #efefef;">
-    <i class="material-icons" style="font-size: 240px; color: rgba(0,0,0,0.54)">not_listed_location</i>
-    <h1 class="mdc-typography mdc-typography--headline2">Sorry!</h1>
-    <p class="mdc-typography mdc-typography--headline6">Currently not delivering to your location</p>
+  <div id="app3" v-else style="display: flex; justify-content:center; align-items: center; flex-direction: column; background: #efefef;">
+    <i class="material-icons" style="font-size: 115px; color: rgba(0,0,0,0.54)">not_listed_location</i>
+    <h1 class="mdc-typography mdc-typography--headline3">Not Available</h1>
+    <p class="mdc-typography mdc-typography--headline6" style="text-align: center;">We are currently not delivering to your location</p>
+    <div id="map"></div>
   </div>
 </template>
 
 <script>
-import FoodItems from './models/FoodItems';
-export default {
-  name: 'app',
-  data () {
-    return {
-      denied: false,
-      open: true
-    }
-  },
-  methods: {
-    getItemTotal (id) {
-      for (var i=0; i<this.foodItems.length; i++) {
-        if (this.foodItems[i].id === id) {
-          return this.foodItems[i].price * this.cart[id]
-        }
+  import FoodItems from './models/FoodItems';
+  export default {
+    name: 'app',
+    data() {
+      return {
+        denied: true,
+        open: true,
+        map: null,
+        clMarker: null
       }
     },
-    goToCart () {
+    methods: {
+      getItemTotal(id) {
+        for (var i = 0; i < this.foodItems.length; i++) {
+          if (this.foodItems[i].id === id) {
+            return this.foodItems[i].price * this.cart[id]
+          }
+        }
+      },
+      goToCart() {
 
-    },
-    signOut () {
-      window.firebase.auth().signOut()
-    },
-    addToCart (id) {
-      if (this.cart.hasOwnProperty(id)) this.$set(this.cart, id, this.cart[id] + 1)
-      else this.$set(this.cart, id, 1)
-    },
-    removeFromCart (id) {
-      if (this.cart.hasOwnProperty(id) && this.cart[id] > 1) this.$set(this.cart, id, this.cart[id] - 1)
-      else if (this.cart.hasOwnProperty(id) && this.cart[id] === 1) this.$delete(this.cart, id)
-    },
-    itemCounter: function (id, operation) {
-      if (operation === 'add') {
-        this.cart[id] = this.cart[id] + 1;
-      } else {
-        if (this.cart[id] != 1) {
-          this.cart[id] = this.cart[id] - 1;
+      },
+      signOut() {
+        window.firebase.auth().signOut()
+      },
+      addToCart(id) {
+        if (this.cart.hasOwnProperty(id)) this.$set(this.cart, id, this.cart[id] + 1)
+        else this.$set(this.cart, id, 1)
+      },
+      removeFromCart(id) {
+        if (this.cart.hasOwnProperty(id) && this.cart[id] > 1) this.$set(this.cart, id, this.cart[id] - 1)
+        else if (this.cart.hasOwnProperty(id) && this.cart[id] === 1) this.$delete(this.cart, id)
+      },
+      itemCounter: function (id, operation) {
+        if (operation === 'add') {
+          this.cart[id] = this.cart[id] + 1;
         } else {
-          var cart = Object.assign({}, this.cart)
-          delete cart[id]
-          this.cart = cart
+          if (this.cart[id] != 1) {
+            this.cart[id] = this.cart[id] - 1;
+          } else {
+            var cart = Object.assign({}, this.cart)
+            delete cart[id]
+            this.cart = cart
+          }
         }
       }
-    }
-  },
-  computed: {
-    subtotal () {
-      var _total = 0
-      for (var i in this.cart) {
-        _total += this.getItemTotal(i)
+    },
+    computed: {
+      subtotal() {
+        var _total = 0
+        for (var i in this.cart) {
+          _total += this.getItemTotal(i)
+        }
+        return _total
+      },
+      delivery() {
+        return 50
+      },
+      packaging() {
+        return 20
+      },
+      total() {
+        return this.subtotal + this.delivery + this.packaging
       }
-      return _total
     },
-    delivery () {
-      return 50
-    },
-    packaging () {
-      return 20
-    },
-    total () {
-      return this.subtotal + this.delivery + this.packaging
-    }
-  },
-  created () {
-    window.firebase.firestore().collection('config').doc('delivery')
-      .onSnapshot(snapshot => {
-        this.open = snapshot.data().open
-      })
-    window.navigator.geolocation.getCurrentPosition(position => {
-      var service = new window.google.maps.DistanceMatrixService();
-      service.getDistanceMatrix(
-        {
-          origins: [{lat: position.coords.latitude, lng: position.coords.longitude}],
-          destinations: [{lat:  12.937008, lng: 77.614657}],
+    created() {
+      window.firebase.firestore().collection('config').doc('delivery')
+        .onSnapshot(snapshot => {
+          this.open = snapshot.data().open
+        })
+      window.navigator.geolocation.getCurrentPosition(position => {
+        var service = new window.google.maps.DistanceMatrixService();
+        service.getDistanceMatrix({
+          origins: [{
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          }],
+          destinations: [{
+            lat: 12.937008,
+            lng: 77.614657
+          }],
           travelMode: 'DRIVING',
           // transitOptions: TransitOptions,
           // drivingOptions: DrivingOptions,
@@ -147,111 +156,199 @@ export default {
           // avoidTolls: Boolean,
         }, callback.bind(this));
 
-      function callback(response) {
-        // See Parsing the Results for
-        // the basics of a callback function.
-        if (response.rows[0].elements[0].distance.value > 5000) {
-          this.denied = true
+        function callback(response) {
+          // See Parsing the Results for
+          // the basics of a callback function.
+          if (response.rows[0].elements[0].status === 'ZERO_RESULTS') {
+            this.map = new window.google.maps.Map(document.getElementById('map'), {
+              center: {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              },
+              zoom: 14
+            });
+            this.clMarker = new window.google.maps.Marker({
+              position: {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              },
+              map: this.map,
+              icon: {
+                url: '/static/icon/blue-dot.png',
+                scaledSize: new window.google.maps.Size(80, 80),
+                anchor: new window.google.maps.Point(40, 40)
+              }
+            });
+            return
+          }
+          if (response.rows[0].elements[0].distance.value < 5000) {
+            this.denied = false
+          } else {
+            this.map = new window.google.maps.Map(document.getElementById('map'), {
+              center: {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              },
+              zoom: 14
+            });
+            this.clMarker = new window.google.maps.Marker({
+              position: {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              },
+              map: this.map,
+              icon: {
+                url: '/static/icon/blue-dot.png',
+                scaledSize: new window.google.maps.Size(80, 80),
+                anchor: new window.google.maps.Point(40, 40)
+              }
+            });
+          }
+        }
+      })
+    },
+    watch: {
+      denied() {
+        if (!this.denied) {
+          window.setTimeout(() => {
+            window.mdc.topAppBar.MDCTopAppBar.attachTo(document.querySelector('.mdc-top-app-bar'));
+            let drawer = new window.mdc.drawer.MDCPersistentDrawer(document.querySelector('.mdc-drawer--persistent'));
+            document.querySelector('.menu').addEventListener('click', () => drawer.open = !drawer.open);
+            document.querySelector('#app').style.minHeight = window.innerHeight + 'px'
+            this.$router.afterEach(() => {
+              drawer.open = false
+            })
+          }, 1000)
         }
       }
-    })
-  },
-  mounted () {
-    window.mdc.topAppBar.MDCTopAppBar.attachTo(document.querySelector('.mdc-top-app-bar'));
+    },
+    mounted() {
 
-    let drawer = new window.mdc.drawer.MDCPersistentDrawer(document.querySelector('.mdc-drawer--persistent'));
-    document.querySelector('.menu').addEventListener('click', () => drawer.open = !drawer.open);
+      // get Food Items
+      new FoodItems().onSnapshot(window.firebase.firestore, foodItems => {
+        if (this.foodItems.length === 0) {
+          this.foodItems = foodItems
+          window.location.href = '/'
+        } else {
+          this.foodItems = foodItems
+        }
+      })
 
-    // get Food Items
-    let _getFoodItems = new FoodItems(window.firebase.firestore, foodItems => {
-      this.foodItems = foodItems
-    })
-    console.log(_getFoodItems)
+      window.firebase.auth().onAuthStateChanged(user => {
+        this.user = user ? user.uid : null;
+        this.userProfile = user ? {
+          displayName: user.displayName,
+          phoneNumber: user.phoneNumber
+        } : {displayName: '', phoneNumber: ''}
+      })
 
-    window.firebase.auth().onAuthStateChanged(user => {
-      this.user = user ? user.uid : null;
-      this.userProfile = {displayName: user.displayName, phoneNumber: user.phoneNumber}
-    })
-
-    document.querySelector('#app').style.minHeight = window.innerHeight + 'px'
-
-    this.$router.afterEach(() => {
-      drawer.open = false
-    })
+    }
   }
-}
+
 </script>
 
 <style>
-html,body {
-  margin: 0;
-  font-family: 'Open Sans', sans-serif !important;
-  width: 100%;
-  overflow-x: hidden;
-}
-:root {
-    --mdc-theme-primary: #0097A7;
+  html,
+  body {
+    margin: 0;
+    font-family: 'Open Sans', sans-serif !important;
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  :root {
+    --mdc-theme-primary: #ea3624;
     --mdc-theme-secondary: #fff;
     --mdc-theme-background: #fff;
-    --mdc-theme-surface: #0097A7;
+    --mdc-theme-surface: #ea3624;
     --mdc-theme-on-primary: #fff;
-    --mdc-theme-on-secondary: #0097A7;
+    --mdc-theme-on-secondary: #ea3624;
     --mdc-theme-on-surface: #000;
-    --mdc-theme-text-primary-on-background: rgba(0,0,0,.54);
-    --mdc-theme-text-secondary-on-background: rgba(0,0,0,.54);
-    --mdc-theme-text-hint-on-background: rgba(0,0,0,.38);
-    --mdc-theme-text-disabled-on-background: rgba(0,0,0,.38);
-    --mdc-theme-text-icon-on-background: rgba(0,0,0,.38);
-    --mdc-theme-text-primary-on-light: rgba(0,0,0,.87);
-    --mdc-theme-text-secondary-on-light: rgba(0,0,0,.54);
-    --mdc-theme-text-hint-on-light: rgba(0,0,0,.38);
-    --mdc-theme-text-disabled-on-light: rgba(0,0,0,.38);
-    --mdc-theme-text-icon-on-light: rgba(0,0,0,.38);
+    --mdc-theme-text-primary-on-background: rgba(0, 0, 0, .54);
+    --mdc-theme-text-secondary-on-background: rgba(0, 0, 0, .54);
+    --mdc-theme-text-hint-on-background: rgba(0, 0, 0, .38);
+    --mdc-theme-text-disabled-on-background: rgba(0, 0, 0, .38);
+    --mdc-theme-text-icon-on-background: rgba(0, 0, 0, .38);
+    --mdc-theme-text-primary-on-light: rgba(0, 0, 0, .87);
+    --mdc-theme-text-secondary-on-light: rgba(0, 0, 0, .54);
+    --mdc-theme-text-hint-on-light: rgba(0, 0, 0, .38);
+    --mdc-theme-text-disabled-on-light: rgba(0, 0, 0, .38);
+    --mdc-theme-text-icon-on-light: rgba(0, 0, 0, .38);
     --mdc-theme-text-primary-on-dark: #fff;
-    --mdc-theme-text-secondary-on-dark: hsla(0,0%,100%,.7);
-    --mdc-theme-text-hint-on-dark: hsla(0,0%,100%,.5);
-    --mdc-theme-text-disabled-on-dark: hsla(0,0%,100%,.5);
-    --mdc-theme-text-icon-on-dark: hsla(0,0%,100%,.5);
-}
-.mdc-top-app-bar__title {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-left: 0;
-  width: 100%;
-}
-.mdc-top-app-bar {
-  background-image: url('./assets/bg3.png');
-  z-index: 100;
-}
-.mdc-slider:not(.mdc-slider--disabled) .mdc-slider__track-container {
-    background-color: rgba(0,0,0,.1);
-}
-.mdc-top-app-bar__section--align-end > span {
-  background: #fff;
-  color: var(--mdc-theme-primary);
-  width: 48px;
-  height: 48px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 24px;
-}
-main {
-  padding-top: 56px;
-  width: 100%;
-}
-#app {
-  display: flex;
-}
-#app > div {
-  width: 100%;
-}
-.mdc-drawer header {
-  height: 180px;
-}
-.mdc-drawer header > div {
-  flex-direction: column;
-  align-items: center !important;
-}
+    --mdc-theme-text-secondary-on-dark: hsla(0, 0%, 100%, .7);
+    --mdc-theme-text-hint-on-dark: hsla(0, 0%, 100%, .5);
+    --mdc-theme-text-disabled-on-dark: hsla(0, 0%, 100%, .5);
+    --mdc-theme-text-icon-on-dark: hsla(0, 0%, 100%, .5);
+  }
+
+  .mdc-top-app-bar__title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 0;
+    width: 100%;
+  }
+
+  .mdc-top-app-bar {
+    background: linear-gradient(#ea3624, #e06926);
+    z-index: 100;
+  }
+
+  .mdc-slider:not(.mdc-slider--disabled) .mdc-slider__track-container {
+    background-color: rgba(0, 0, 0, .1);
+  }
+
+  .mdc-top-app-bar__section--align-end>span {
+    background: #fff;
+    color: #ea3624;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 24px;
+  }
+
+  main {
+    padding-top: 56px;
+    width: 100%;
+  }
+
+  #app {
+    display: flex;
+  }
+
+  #app2,
+  #app3 {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px;
+  }
+
+  #app3 #map {
+    height: 160px;
+    width: 320px;
+    margin: 56px 0;
+  }
+
+  #app>div {
+    width: 100%;
+  }
+
+  .mdc-drawer {
+    z-index: 1000;
+  }
+
+  .mdc-drawer header {
+    height: 180px;
+  }
+
+  .mdc-drawer header>div {
+    flex-direction: column;
+    align-items: center !important;
+  }
+
 </style>

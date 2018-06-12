@@ -70,8 +70,8 @@
     </div>
 
     <div style="display: flex;">
-      <button id="pay_button" class="mdc-button mdc-button--raised" @click="cod">CASH ON DELIVERY</button>
-      <button id="pay_button" class="mdc-button mdc-button--raised" @click="pay">PAY ONLINE</button>
+      <button id="pay_button" class="mdc-button mdc-button--raised" @click="cod" :disabled="!(address.length > 0 && location !== null)">CASH ON DELIVERY</button>
+      <button id="pay_button" class="mdc-button mdc-button--raised" @click="pay" :disabled="!(address.length > 0 && location !== null)">PAY ONLINE</button>
     </div>
 
   </div>
@@ -146,7 +146,7 @@ import Login from './Login'
                 })
             }.bind(this),
             "theme": {
-                "color": "#0097A7"
+                "color": "#ea3624"
             }
         };
         this.rzp = new window.Razorpay(options);

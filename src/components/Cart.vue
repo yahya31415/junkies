@@ -94,7 +94,7 @@
         <div class="decription">
           <h4 class="mdc-typography--subtitle1">{{getItem(id).name}}</h4>
           <p class="mdc-typography--caption">{{getItem(id).description}}</p>
-          <!-- <div @click="dialog()" class="cutomize">
+          <div @click="dialog()" class="cutomize">
             <h5 @click="getAddOns(getItem(id))">CUSTOMIZE </h5>
             <i class="material-icons">keyboard_arrow_down</i>
           </div> --
@@ -107,11 +107,9 @@
         <h5 class="price">&#8377;{{ getItemTotal(id)}}</h5> -->
       </div>
     </div>
-    <hr />
     <div class="total-row-1"><span class="mdc-typography--body2">Subtotal</span><span class="mdc-typography--button">&#8377; {{ subtotal }}</span></div>
     <div class="total-row-1"><span class="mdc-typography--body2">Delivery Charges</span><span class="mdc-typography--button">&#8377; {{ delivery }}</span></div>
     <div class="total-row-1"><span class="mdc-typography--body2">Packaging Charges</span><span class="mdc-typography--button">&#8377; {{ packaging }}</span></div>
-    <hr />
     <div class="total-row-1"><span class="mdc-typography--body1">Total</span><span class="mdc-typography--button">&#8377; {{ total }}</span></div>
 
     <div class="checkout-button">
@@ -209,10 +207,10 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin: 12px 16px 16px 16px;
-  border-radius: 6px;
-  color: solid 8px #FF5252;
+  margin: 12px 20px 16px 20px;
+  padding-bottom: 16px;
   color: rgba(0, 0, 0, 0.74);
+  border-bottom: solid 1px rgba(0, 0, 0, 0.1);
 }
 
 /* .item[veg] {
@@ -230,7 +228,7 @@ export default {
   padding-right: 16px;
 }
 .food-price {
-  padding-top: 12px;
+  padding-top: 0px;
   font-weight: 400;
 }
 .lcart-qty {
@@ -401,7 +399,7 @@ h4 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 16px;
+  margin: 0 22px;
 }
 
 hr {
@@ -468,8 +466,8 @@ hr {
 }
 
 .checkout-button a {
-  width: 80%;
-  margin: 24px auto;
+  width: calc(100% - 44px);
+  margin: 24px 22px;
   display: block;
   color: #fff;
   text-align: center;
