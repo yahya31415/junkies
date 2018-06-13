@@ -71,7 +71,7 @@
 
     <div style="display: flex;">
       <button id="pay_button" class="mdc-button mdc-button--raised" @click="cod" :disabled="!(address.length > 0 && location !== null)">CASH ON DELIVERY</button>
-      <button id="pay_button" class="mdc-button mdc-button--raised" @click="pay" :disabled="!(address.length > 0 && location !== null)">PAY ONLINE</button>
+      <!-- <button id="pay_button" class="mdc-button mdc-button--raised" @click="pay" :disabled="!(address.length > 0 && location !== null)">PAY ONLINE</button> -->
     </div>
 
   </div>
