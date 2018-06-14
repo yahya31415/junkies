@@ -86,7 +86,8 @@ export default {
       if (this.codeSent) {
         this.waiting = true
         this.confirmationResult.confirm(this.phoneNumber).then(function () {
-          this.$router.replace('/cart')
+          if (this.$store.state.userProfile.displayName.length === 0)
+          this.$router.replace('/name')
         }.bind(this)).catch(function (error) {
           alert(error)
           this.waiting = false
@@ -116,25 +117,6 @@ export default {
       //   onSignInSubmit();
       // }
     })
-    window.firebase.auth().onAuthStateChanged(function (user) {
-      if (user && user.displayName) this.$router.replace('/cart')
-      if (!user.displayName) this.$router.replace('/name')
-      else {
-        // var ui = new window.firebaseui.auth.AuthUI(window.firebase.auth())
-        // ui.start('#firebaseui-auth-container', {
-        //   signInOptions: [
-        //     {
-        //       provider: window.firebase.auth.PhoneAuthProvider.PROVIDER_ID,
-        //       defaultCoundivy: 'IN'
-        //     },
-        //   ],
-        //   recaptchaParameters: {
-        //       size: 'invisible'
-        //   }
-        //   // Other config options...
-        // })
-      }
-    }.bind(this))
   }
 }
 </script>
@@ -143,10 +125,9 @@ export default {
 .appbar {
   width: auto;
   height: 80px;
-  background-color: var(--mdc-theme-primary);
   padding-top: 18px;
   padding-bottom: 18px;
-  background-image: url('../assets/bg3.png');
+  background: linear-gradient(#e06926,#ea3624);
 }
 .toolbar {
   height: 56px;

@@ -82,6 +82,7 @@
 
 <script>
 import Login from './Login'
+import {mapState} from 'vuex'
 
   export default {
     components: {Login},
@@ -195,6 +196,7 @@ import Login from './Login'
         }
       }
     },
+    computed: mapState(['user', 'cart']),
     mounted () {
       const slider = window.mdc.slider.MDCSlider.attachTo(document.querySelector('.mdc-slider'));
       slider.listen('MDCSlider:change', () => console.log(`Value changed to ${slider.value}`));

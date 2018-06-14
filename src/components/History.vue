@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 export default {
   name: 'OrderHistory',
   data() {
@@ -37,6 +38,7 @@ export default {
         // this.$router.replace('/order_progress/'+ id)
     }
   },
+  computed: mapState(['foodItems']),
   mounted() {
     window.firebase.auth().onAuthStateChanged(function (user) {
       if (user) {

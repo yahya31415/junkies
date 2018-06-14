@@ -41,14 +41,14 @@
           </section>
           <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
             <span v-if="Object.keys(cart).length > 0">{{ Object.keys(cart).length }}</span>
-            <router-link to="/cart" class="material-icons mdc-top-app-bar__action-item" aria-label="Cart" alt="Cart" :style="Object.keys(cart).length > 0 ? 'color: rgba(255,255,255,0.7)' : 'color: rgba(0, 0, 0,0.7)'">shopping_cart</router-link>
+            <router-link :disabled="!(Object.keys(cart).length > 0)" to="/cart" class="material-icons mdc-top-app-bar__action-item" aria-label="Cart" alt="Cart" :style="Object.keys(cart).length > 0 ? 'color: rgba(255,255,255,0.7)' : 'color: rgba(0, 0, 0,0.7)'">shopping_cart</router-link>
             <!-- <router-link to="/profile" class="material-icons mdc-top-app-bar__action-item" aria-label="Profile" alt="Profile">account_circle</router-link>
             <a href="#" @click="signOut" class="material-icons mdc-top-app-bar__action-item" aria-label="Sign Out" alt="Sign Out">exit_to_app</a> -->
           </section>
         </div>
       </header>
       <main>
-        <router-view :addToCart="addToCart" :removeFromCart="removeFromCart" :subtotal="subtotal" :delivery="delivery" :packaging="packaging"
+        <router-view :addToCart="addCart" :removeFromCart="removeCart" :subtotal="subtotal" :delivery="delivery" :packaging="packaging"
           :total="total" :getItemTotal="getItemTotal"></router-view>
       </main>
     </div>
@@ -67,7 +67,8 @@
 </template>
 
 <script>
-  import FoodItems from './models/FoodItems';
+import {mapState, mapMutations} from 'vuex'
+
   export default {
     name: 'app',
     data() {
@@ -86,33 +87,16 @@
           }
         }
       },
-      goToCart() {
-
-      },
       signOut() {
         window.firebase.auth().signOut()
       },
-      addToCart(id) {
-        if (this.cart.hasOwnProperty(id)) this.$set(this.cart, id, this.cart[id] + 1)
-        else this.$set(this.cart, id, 1)
+      addCart(id) {
+        this.addToCart({item: id})
       },
-      removeFromCart(id) {
-        if (this.cart.hasOwnProperty(id) && this.cart[id] > 1) this.$set(this.cart, id, this.cart[id] - 1)
-        else if (this.cart.hasOwnProperty(id) && this.cart[id] === 1) this.$delete(this.cart, id)
+      removeCart(id) {
+        this.removeFromCart({item: id})
       },
-      itemCounter: function (id, operation) {
-        if (operation === 'add') {
-          this.cart[id] = this.cart[id] + 1;
-        } else {
-          if (this.cart[id] != 1) {
-            this.cart[id] = this.cart[id] - 1;
-          } else {
-            var cart = Object.assign({}, this.cart)
-            delete cart[id]
-            this.cart = cart
-          }
-        }
-      }
+      ...mapMutations(['addToCart', 'removeFromCart'])
     },
     computed: {
       subtotal() {
@@ -130,7 +114,8 @@
       },
       total() {
         return this.subtotal + this.delivery + this.packaging
-      }
+      },
+      ...mapState(['foodItems', 'user', 'cart'])
     },
     created() {
       window.firebase.firestore().collection('config').doc('delivery')
@@ -223,25 +208,7 @@
       }
     },
     mounted() {
-
-      // get Food Items
-      new FoodItems().onSnapshot(window.firebase.firestore, foodItems => {
-        if (this.foodItems.length === 0) {
-          this.foodItems = foodItems
-          window.location.href = '/'
-        } else {
-          this.foodItems = foodItems
-        }
-      })
-
-      window.firebase.auth().onAuthStateChanged(user => {
-        this.user = user ? user.uid : null;
-        this.userProfile = user ? {
-          displayName: user.displayName,
-          phoneNumber: user.phoneNumber
-        } : {displayName: '', phoneNumber: ''}
-      })
-
+      this.$store.dispatch('getUser')
     }
   }
 
@@ -350,5 +317,8 @@
     flex-direction: column;
     align-items: center !important;
   }
-
+  a[disabled] {
+    pointer-events:none;
+    opacity:0.6;
+  }
 </style>

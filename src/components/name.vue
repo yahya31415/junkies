@@ -56,7 +56,7 @@ export default {
   },
   mounted: function () {
     window.firebase.auth().onAuthStateChanged(function (user) {
-      if (user && user.displayName) this.$router.replace('/cart')
+      if (user && user.displayName) this.$router.replace('/checkout')
       else {
         // var ui = new window.firebaseui.auth.AuthUI(window.firebase.auth())
         // ui.start('#firebaseui-auth-container', {

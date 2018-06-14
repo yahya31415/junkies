@@ -66,7 +66,7 @@
 </template>
 
 <script>
-
+import {mapState} from 'vuex'
 export default {
   name: 'item',
   props: ['addToCart', 'removeFromCart'],
@@ -79,7 +79,8 @@ export default {
         else _items[item.category][item.subcategory].push(item)
       })
       return _items
-    }
+    },
+    ...mapState(['foodItems', 'cart'])
   },
   methods: {
     goto (id) {

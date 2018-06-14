@@ -21,56 +21,6 @@
 
     <h2 class="mdc-typography--headline4">Cart</h2>
 
-    <!-- <section class="toolbar">
-      <router-link to="/">
-        <i class="material-icons">keyboard_backspace</i>
-      </router-link>
-      <div class="left">
-        <img src="../assets/logo.png" height="40" alt="">
-      </div>
-      <div class="right">
-        <router-link to="/lcart">
-          <i class="material-icons">shopping_lcart</i>
-        </router-link>
-        <router-link to="/profile">
-          <i class="material-icons">account_circle</i>
-        </router-link>
-        <a>
-          <i class="material-icons">exit_to_app</i>
-        </a>
-      </div>
-    </section> -->
-
-    <!-- <div v-if="showDialog" id="dialog">
-      <div class="dialogContainer">
-        <div class="dialogItem">
-          <img v-if="itemAddOns.isVeg" src="../assets/img/veg.png" alt="veg" width="18px" height="18px">
-          <img v-if="!itemAddOns.isVeg" src="../assets/img/nonVeg.png" alt="non-veg" width="18px" height="18px">
-          <div>
-            <h5>{{itemAddOns.name}}</h5>
-            <span>&#8377;{{itemAddOns.price}}</span>
-          </div>
-        </div>
-        <div>
-          <h5 style="margin:0;padding:16px 32px;">Add Ons</h5>
-
-          <div v-for="(addOn,i) in itemAddOns.addOns" :key="i">
-            <div class="addOn">
-              <img v-if="addOn.isVeg" src="../assets/img/veg.png" alt="veg" width="16px" height="16px"> &nbsp;
-              <img v-if="!addOn.isVeg" src="../assets/img/nonVeg.png" alt="veg" width="16px" height="16px"> &nbsp;
-              <input @click="addOnChecked(addOn.name)" type="checkbox" name="addOns" id="addOnCheck">
-              <span>{{addOn.name}} &#8377;{{addOn.price}}</span>
-            </div>
-          </div>
-        </div>
-        <hr>
-        <div class="dialogFooter">
-          <span>Item total &#8377;{{itemAddOns.total}}</span>
-          <h5 @click="updateItem()">UPDATE ITEM</h5>
-        </div>
-      </div>
-    </div> -->
-
     <div class="orderList">
       <div class="item" v-for="(size,id) in cart" :key="id" :veg="getItem(id).isVeg">
 
@@ -88,23 +38,6 @@
                 </div>
               </div>
             </div>
-
-        <!-- <img v-if="getItem(id).isVeg" src="../assets/img/veg.png" alt="vegICon" width="18px" height="18px">
-        <img v-if="!getItem(id).isVeg" src="../assets/img/nonVeg.png" alt="vegICon" width="18px" height="18px">
-        <div class="decription">
-          <h4 class="mdc-typography--subtitle1">{{getItem(id).name}}</h4>
-          <p class="mdc-typography--caption">{{getItem(id).description}}</p>
-          <div @click="dialog()" class="cutomize">
-            <h5 @click="getAddOns(getItem(id))">CUSTOMIZE </h5>
-            <i class="material-icons">keyboard_arrow_down</i>
-          </div> --
-        </div>
-        <div class="quantity">
-          <span class="removeItem" @click="removeFromCart(id)">-</span>
-          <span class="qty">{{size}}</span>
-          <span class="addItem" @click="addToCart(id)">+</span>
-        </div>
-        <h5 class="price">&#8377;{{ getItemTotal(id)}}</h5> -->
       </div>
     </div>
     <div class="total-row-1"><span class="mdc-typography--body2">Subtotal</span><span class="mdc-typography--button">&#8377; {{ subtotal }}</span></div>
@@ -119,6 +52,7 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 
 export default {
   name: 'lcart',
@@ -135,7 +69,7 @@ export default {
     slider.listen('MDCSlider:change', () => console.log(`Value changed to ${slider.value}`));
     document.querySelector('#cart').style.minHeight = window.innerHeight + 'px'
   },
-
+  computed: mapState(['cart', 'foodItems']),
   methods: {
     getItem (id) {
       for (var i=0; i<this.foodItems.length; i++) {
