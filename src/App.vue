@@ -42,14 +42,11 @@
           <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
             <span v-if="Object.keys(cart).length > 0">{{ Object.keys(cart).length }}</span>
             <router-link :disabled="!(Object.keys(cart).length > 0)" to="/cart" class="material-icons mdc-top-app-bar__action-item" aria-label="Cart" alt="Cart" :style="Object.keys(cart).length > 0 ? 'color: rgba(255,255,255,0.7)' : 'color: rgba(0, 0, 0,0.7)'">shopping_cart</router-link>
-            <!-- <router-link to="/profile" class="material-icons mdc-top-app-bar__action-item" aria-label="Profile" alt="Profile">account_circle</router-link>
-            <a href="#" @click="signOut" class="material-icons mdc-top-app-bar__action-item" aria-label="Sign Out" alt="Sign Out">exit_to_app</a> -->
           </section>
         </div>
       </header>
       <main>
-        <router-view :addToCart="addCart" :removeFromCart="removeCart" :subtotal="subtotal" :delivery="delivery" :packaging="packaging"
-          :total="total" :getItemTotal="getItemTotal"></router-view>
+        <router-view></router-view>
       </main>
     </div>
   </div>
@@ -74,54 +71,17 @@ import {mapState, mapMutations} from 'vuex'
     data() {
       return {
         denied: true,
-        open: true,
         map: null,
         clMarker: null
       }
     },
     methods: {
-      getItemTotal(id) {
-        for (var i = 0; i < this.foodItems.length; i++) {
-          if (this.foodItems[i].id === id) {
-            return this.foodItems[i].price * this.cart[id]
-          }
-        }
-      },
-      signOut() {
-        window.firebase.auth().signOut()
-      },
-      addCart(id) {
-        this.addToCart({item: id})
-      },
-      removeCart(id) {
-        this.removeFromCart({item: id})
-      },
-      ...mapMutations(['addToCart', 'removeFromCart'])
+      ...mapMutations(['signOut'])
     },
     computed: {
-      subtotal() {
-        var _total = 0
-        for (var i in this.cart) {
-          _total += this.getItemTotal(i)
-        }
-        return _total
-      },
-      delivery() {
-        return 50
-      },
-      packaging() {
-        return 20
-      },
-      total() {
-        return this.subtotal + this.delivery + this.packaging
-      },
-      ...mapState(['foodItems', 'user', 'cart'])
+      ...mapState(['user', 'cart', 'open'])
     },
     created() {
-      window.firebase.firestore().collection('config').doc('delivery')
-        .onSnapshot(snapshot => {
-          this.open = snapshot.data().open
-        })
       window.navigator.geolocation.getCurrentPosition(position => {
         var service = new window.google.maps.DistanceMatrixService();
         service.getDistanceMatrix({
@@ -134,11 +94,6 @@ import {mapState, mapMutations} from 'vuex'
             lng: 77.614657
           }],
           travelMode: 'DRIVING',
-          // transitOptions: TransitOptions,
-          // drivingOptions: DrivingOptions,
-          // unitSystem: UnitSystem,
-          // avoidHighways: Boolean,
-          // avoidTolls: Boolean,
         }, callback.bind(this));
 
         function callback(response) {
@@ -206,12 +161,8 @@ import {mapState, mapMutations} from 'vuex'
           }, 1000)
         }
       }
-    },
-    mounted() {
-      this.$store.dispatch('getUser')
     }
   }
-
 </script>
 
 <style>

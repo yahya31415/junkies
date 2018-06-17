@@ -66,10 +66,9 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import {mapState, mapMutations} from 'vuex'
 export default {
   name: 'item',
-  props: ['addToCart', 'removeFromCart'],
   computed: {
     items () {
       let _items = {}
@@ -89,7 +88,8 @@ export default {
         left: 0,
         behavior: 'smooth'
       })
-    }
+    },
+    ...mapMutations(['addToCart', 'removeFromCart'])
   },
   mounted () {
       // Instantiation

@@ -1,6 +1,7 @@
 <template>
   <div id="cart">
 
+    <!-- progress indicator -->
     <div class="mdc-slider mdc-slider--discrete mdc-slider--display-markers" tabindex="0" role="slider"
         aria-valuemin="1" aria-valuemax="4" aria-valuenow="2"
         aria-label="Cart" aria-disabled>
@@ -23,11 +24,9 @@
 
     <div class="orderList">
       <div class="item" v-for="(size,id) in cart" :key="id" :veg="getItem(id).isVeg">
-
         <div>
-              <span class="mdc-typography--subtitle1 food-name" style="font-family: 'Open Sans', sans-serif !important;">{{getItem(id).name}}</span>
-              <!-- <span class="mdc-typography--caption food-desc" style="font-family: 'Open Sans', sans-serif !important;">{{getItem(id).description}}</span> -->
-              <span class="mdc-typography--subtitle2 food-price" style="font-family: 'Open Sans', sans-serif !important;">&#8377; {{getItem(id).price}} x {{ size }} = {{ getItem(id).price * size }}</span>
+              <span class="mdc-typography--subtitle1 food-name">{{getItem(id).name}}</span>
+              <span class="mdc-typography--subtitle2 food-price">&#8377; {{getItem(id).price}} x {{ size }} = {{ getItem(id).price * size }}</span>
             </div>
             <div>
               <div class="lcart-modifier">
@@ -52,15 +51,12 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import {mapState, mapMutations, mapGetters} from 'vuex'
 
 export default {
   name: 'lcart',
-  props: ['subtotal', 'delivery', 'packaging', 'total', 'getItemTotal', 'addToCart', 'removeFromCart'],
   data: function () {
     return {
-      items: [],
-      itemAddOns: {},
       showDialog: false
     };
   },
@@ -69,52 +65,16 @@ export default {
     slider.listen('MDCSlider:change', () => console.log(`Value changed to ${slider.value}`));
     document.querySelector('#cart').style.minHeight = window.innerHeight + 'px'
   },
-  computed: mapState(['cart', 'foodItems']),
+  computed: {
+    ...mapState(['cart', 'foodItems']),
+    ...mapGetters(['subtotal', 'delivery', 'packaging', 'total', 'getItemTotal'])
+  },
   methods: {
+    ...mapMutations(['addToCart', 'removeFromCart']),
     getItem (id) {
       for (var i=0; i<this.foodItems.length; i++) {
         if (this.foodItems[i].id === id) {
           return this.foodItems[i]
-        }
-      }
-    },
-    dialog: function () {
-      this.showDialog = !this.showDialog
-    },
-    updateItem: function (id) {
-      for (let i = 0; i < this.items.length; i++) {
-        if (this.items[i].id == id) {
-          this.items[i].total = this.itemAddOns.total
-          this.items.addOns = this.itemAddOns.addOns
-        }
-      }
-      this.dialog()
-
-    },
-    getAddOns: function (item) {
-      for (let i = 0; i < item.addOns; i++) {
-        item.addOns[i].isChecked = false
-      }
-      item.total = item.total
-      this.itemAddOns = item
-      console.log(this.itemAddOns)
-    },
-    addOnChecked: function (name) {
-
-      for (let i = 0; i < this.itemAddOns.addOns.length; i++) {
-
-        if (this.itemAddOns.addOns[i].name == name) {
-          this.itemAddOns.addOns[i].isChecked = !this.itemAddOns.addOns[i].isChecked
-
-          if (this.itemAddOns.addOns[i].isChecked) {
-            this.itemAddOns.total += this.itemAddOns.addOns[i].price
-            console.log('if')
-            console.log(this.itemAddOns)
-          } else {
-            console.log('else')
-            this.itemAddOns.total -= this.itemAddOns.addOns[i].price
-            console.log(this.itemAddOns)
-          }
         }
       }
     }
@@ -157,6 +117,7 @@ export default {
   text-transform: uppercase;
   font-weight: 800;
   padding-bottom: 2px;
+  font-family: 'Open Sans', sans-serif !important;
 }
 .item > div:first-child {
   padding-right: 16px;
@@ -164,6 +125,7 @@ export default {
 .food-price {
   padding-top: 0px;
   font-weight: 400;
+  font-family: 'Open Sans', sans-serif !important;
 }
 .lcart-qty {
   border-radius: 24px;

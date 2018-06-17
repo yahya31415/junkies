@@ -1,10 +1,6 @@
 <template>
   <div id="checkout" v-if="user">
-    <aside id="cod-mdc-dialog"
-      class="mdc-dialog"
-      role="alertdialog"
-      aria-labelledby="approve-mdc-dialog-label"
-      aria-describedby="approve-mdc-dialog-description">
+    <aside id="cod-mdc-dialog" class="mdc-dialog" role="alertdialog" aria-labelledby="approve-mdc-dialog-label" aria-describedby="approve-mdc-dialog-description">
       <div class="mdc-dialog__surface">
         <header class="mdc-dialog__header">
           <h2 id="my-mdc-dialog-label" class="mdc-dialog__header__title">
@@ -39,9 +35,8 @@
       <button class='mdc-button mdc-button--raised' @click="showLocationDialog = false">Use this location</button>
     </div>
 
-    <div class="mdc-slider mdc-slider--discrete mdc-slider--display-markers" tabindex="0" role="slider"
-        aria-valuemin="1" aria-valuemax="4" aria-valuenow="3"
-        aria-label="Checkout" aria-disabled>
+    <div class="mdc-slider mdc-slider--discrete mdc-slider--display-markers" tabindex="0" role="slider" aria-valuemin="1" aria-valuemax="4"
+      aria-valuenow="3" aria-label="Checkout" aria-disabled>
       <div class="mdc-slider__track-container">
         <div class="mdc-slider__track"></div>
         <div class="mdc-slider__track-marker-container"></div>
@@ -81,12 +76,17 @@
 </template>
 
 <script>
-import Login from './Login'
-import {mapState} from 'vuex'
+  import Login from './Login'
+  import {
+    mapState,
+    mapGetters
+  } from 'vuex'
 
   export default {
-    components: {Login},
-    data () {
+    components: {
+      Login
+    },
+    data() {
       return {
         showLocationDialog: false,
         map: null,
@@ -99,9 +99,8 @@ import {mapState} from 'vuex'
         dialog: null
       }
     },
-    props: ['total'],
     methods: {
-      cod () {
+      cod() {
         this.dialog = new window.mdc.dialog.MDCDialog(document.querySelector('#cod-mdc-dialog'))
 
         this.dialog.listen('MDCDialog:accept', function () {
@@ -125,60 +124,77 @@ import {mapState} from 'vuex'
 
         this.dialog.show()
       },
-      pay () {
+      pay() {
         // Razorpay
         var options = {
-            "key": "rzp_test_2HNo9r0SKKUfUC",
-            "amount": this.total * 100, // 2000 paise = INR 20
-            "name": "Cafemoto",
-            "description": "Midnight Online Store",
-            "image": "/static/logo.png",
-            "handler": function (response){
-                window.firebase.firestore().collection("Confirmed Orders").add({
-                  phone: window.firebase.auth().currentUser.phoneNumber,
-                  location: this.location,
-                  address: this.address,
-                  items: this.cart,
-                  total: this.total,
-                  timestamp: new Date(),
-                  razorpayResponse: response
-                }).then((doc) => {
-                  this.$router.replace('/order_progress/'+ doc.id)
-                })
-            }.bind(this),
-            "theme": {
-                "color": "#ea3624"
-            }
+          "key": "rzp_test_2HNo9r0SKKUfUC",
+          "amount": this.total * 100, // 2000 paise = INR 20
+          "name": "Cafemoto",
+          "description": "Midnight Online Store",
+          "image": "/static/logo.png",
+          "handler": function (response) {
+            window.firebase.firestore().collection("Confirmed Orders").add({
+              phone: window.firebase.auth().currentUser.phoneNumber,
+              location: this.location,
+              address: this.address,
+              items: this.cart,
+              total: this.total,
+              timestamp: new Date(),
+              razorpayResponse: response
+            }).then((doc) => {
+              this.$router.replace('/order_progress/' + doc.id)
+            })
+          }.bind(this),
+          "theme": {
+            "color": "#ea3624"
+          }
         };
         this.rzp = new window.Razorpay(options);
         this.rzp.open()
       }
     },
     watch: {
-      showLocationDialog () {
+      showLocationDialog() {
         if (this.showLocationDialog) {
           window.setTimeout(() => {
             window.navigator.geolocation.getCurrentPosition(position => {
-              this.location = {lat: position.coords.latitude, lng: position.coords.longitude}
+              this.location = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              }
               this.map = new window.google.maps.Map(document.getElementById('map'), {
-                center: {lat: position.coords.latitude, lng: position.coords.longitude},
+                center: {
+                  lat: position.coords.latitude,
+                  lng: position.coords.longitude
+                },
                 zoom: 17
               });
               this.marker = new window.google.maps.Marker({
-                position: {lat: position.coords.latitude, lng: position.coords.longitude},
+                position: {
+                  lat: position.coords.latitude,
+                  lng: position.coords.longitude
+                },
                 map: this.map
               });
               this.clMarker = new window.google.maps.Marker({
-                position: {lat: position.coords.latitude, lng: position.coords.longitude},
+                position: {
+                  lat: position.coords.latitude,
+                  lng: position.coords.longitude
+                },
                 map: this.map,
                 icon: {
                   url: '/static/icon/blue-dot.png',
-                  scaledSize: new window.google.maps.Size(80,80),
-                  anchor: new window.google.maps.Point(40,40)
+                  scaledSize: new window.google.maps.Size(80, 80),
+                  anchor: new window.google.maps.Point(40, 40)
                 }
               });
               this.geocoder = new window.google.maps.Geocoder();
-              this.geocoder.geocode({location: {lat: position.coords.latitude, lng: position.coords.longitude}}, (result) => {
+              this.geocoder.geocode({
+                location: {
+                  lat: position.coords.latitude,
+                  lng: position.coords.longitude
+                }
+              }, (result) => {
                 this.address = result[0].formatted_address
               })
               window.google.maps.event.addListener(this.map, 'drag', () => {
@@ -188,7 +204,10 @@ import {mapState} from 'vuex'
               });
             })
             window.navigator.geolocation.watchPosition(position => {
-              this.clMarker.setPosition({lat: position.coords.latitude, lng: position.coords.longitude})
+              this.clMarker.setPosition({
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              })
             })
           }, 1000)
         } else {
@@ -196,8 +215,11 @@ import {mapState} from 'vuex'
         }
       }
     },
-    computed: mapState(['user', 'cart']),
-    mounted () {
+    computed: {
+      ...mapState(['user', 'cart']),
+      ...mapGetters(['total'])
+    },
+    mounted() {
       const slider = window.mdc.slider.MDCSlider.attachTo(document.querySelector('.mdc-slider'));
       slider.listen('MDCSlider:change', () => console.log(`Value changed to ${slider.value}`));
 
@@ -206,84 +228,95 @@ import {mapState} from 'vuex'
 
     },
   }
+
 </script>
 
 <style>
-#checkout {
-  background: #efefef;
-  position: relative;
-  z-index: 0;
-  padding-bottom: 40px;
-}
-#checkout h2 {
+  #checkout {
+    background: #efefef;
+    position: relative;
+    z-index: 0;
+    padding-bottom: 40px;
+  }
+
+  #checkout h2 {
     margin: 0 16px;
-  font-family: 'Open Sans', sans-serif !important;
-}
-.d-flex {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
-.mdc-card {
-  margin: 16px;
-  padding: 16px;
-  border-radius: 6px;
-  background: #fff;
-}
-.mdc-slider__track {
-  background-color: var(--mdc-theme-primary) !important;
-}
-#location {
-  position: fixed;
-  top: 56px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #efefef;
-  z-index: 99;
-  overflow-y: auto;
-}
-#appbar {
-  width: 100;
-  height: 160px;
-  background-color: var(--mdc-theme-primary);
-  background-image: url('../assets/bg3.png');
-}
-#map {
-  width: 100%;
-  height: 100%;
-}
-#map-container {
-  width: 90%;
-  padding: 8px;
-  height: 360px;
-  margin: auto;
-  background: #fff;
-  position: relative;
-  top: -150px;
-  border-radius: 6px;
-}
-#address-container {
-  position: relative;
-  top: -150px;
-}
+    font-family: 'Open Sans', sans-serif !important;
+  }
 
-#location button {
-  width: 80%;
-  margin: auto;
-  position: relative;
-  top: -120px;
-  display: block;
-  color: #fff;
-}
+  .d-flex {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-#pay_button {
-  margin: 32px 16px;
-  width: calc(100% - 32px);
-  box-sizing: border-box;
-  display: block;
-  color: #fff;
-  height: 56px;
-}
+  .mdc-card {
+    margin: 16px;
+    padding: 16px;
+    border-radius: 6px;
+    background: #fff;
+  }
+
+  .mdc-slider__track {
+    background-color: var(--mdc-theme-primary) !important;
+  }
+
+  #location {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #efefef;
+    z-index: 99;
+    overflow-y: auto;
+  }
+
+  #appbar {
+    width: 100;
+    height: 160px;
+    background-color: var(--mdc-theme-primary);
+    background-image: url('../assets/bg3.png');
+  }
+
+  #map {
+    width: 100%;
+    height: 100%;
+  }
+
+  #map-container {
+    width: 90%;
+    padding: 8px;
+    height: 360px;
+    margin: auto;
+    background: #fff;
+    position: relative;
+    top: -150px;
+    border-radius: 6px;
+  }
+
+  #address-container {
+    position: relative;
+    top: -150px;
+  }
+
+  #location button {
+    width: 80%;
+    margin: auto;
+    position: relative;
+    top: -120px;
+    display: block;
+    color: #fff;
+  }
+
+  #pay_button {
+    margin: 32px 16px;
+    width: calc(100% - 32px);
+    box-sizing: border-box;
+    display: block;
+    color: #fff;
+    height: 56px;
+  }
+
 </style>

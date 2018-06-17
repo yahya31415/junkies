@@ -184,8 +184,7 @@ export default {
 }
 .numpad {
   width: 100%;
-  position: fixed;
-  bottom: 0;
+  padding-top: 24px;
 }
 
 .numpad span{
