@@ -61,11 +61,11 @@
 
     <div class="mdc-card d-flex">
       <span>Location</span>
-      <button class="mdc-button" @click="showLocationDialog = true">{{ address.length > 0 && location !== null ? address : 'Pick from map' }}</button>
+      <button class="mdc-button" @click="showLocationDialog = true">{{ address.length > 0 && location !== null ? address : 'Click to pick from map' }}</button>
     </div>
 
     <div style="display: flex;">
-      <button id="pay_button" class="mdc-button mdc-button--raised" @click="cod" :disabled="!(address.length > 0 && location !== null)">CASH ON DELIVERY</button>
+      <button id="pay_button" class="mdc-button mdc-button--raised" @click="cash" :disabled="!(address.length > 0 && location !== null)">CASH ON DELIVERY</button>
       <!-- <button id="pay_button" class="mdc-button mdc-button--raised" @click="pay" :disabled="!(address.length > 0 && location !== null)">PAY ONLINE</button> -->
     </div>
 
@@ -79,7 +79,8 @@
   import Login from './Login'
   import {
     mapState,
-    mapGetters
+    mapGetters,
+mapActions
   } from 'vuex'
 
   export default {
@@ -100,21 +101,17 @@
       }
     },
     methods: {
-      cod() {
+      cash() {
         this.dialog = new window.mdc.dialog.MDCDialog(document.querySelector('#cod-mdc-dialog'))
 
         this.dialog.listen('MDCDialog:accept', function () {
-          window.firebase.firestore().collection("Confirmed Orders").add({
-            phone: window.firebase.auth().currentUser.phoneNumber,
+          this.cod({
+            firebase: window.firebase,
             location: this.location,
             address: this.address,
-            items: this.cart,
-            total: this.total,
-            timestamp: new Date(),
-            razorpayResponse: null,
-            isCOD: true
-          }).then((doc) => {
-            this.$router.replace('/order_progress/' + doc.id)
+            cb: (doc) => {
+              this.$router.replace('/order_progress/' + doc.id)
+            }
           })
         }.bind(this))
 
@@ -151,7 +148,8 @@
         };
         this.rzp = new window.Razorpay(options);
         this.rzp.open()
-      }
+      },
+      ...mapActions(['cod'])
     },
     watch: {
       showLocationDialog() {
@@ -276,8 +274,8 @@
   #appbar {
     width: 100;
     height: 160px;
-    background-color: var(--mdc-theme-primary);
-    background-image: url('../assets/bg3.png');
+    margin: 0;
+    background: linear-gradient(#e06926,#ea3624);
   }
 
   #map {

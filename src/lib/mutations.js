@@ -28,6 +28,9 @@ export default (Vue) => {
         Vue.delete(state.cart, id)
       }
     },
+    clearCart(state) {
+      state.cart = {}
+    },
     open(state, isOpen) {
       state.open = isOpen
     },

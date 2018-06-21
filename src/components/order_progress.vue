@@ -42,6 +42,7 @@
             <p v-if="order.delivered">Order is successfully delivered</p>
           </div>
         </div>
+        <a class="mdc-button mdc-button--raised" style="margin: 24px 0;" href="tel:+917012501538"><i class="material-icons mdc-button__icon">phone</i>Call Us</a>
       </div>
     </div>
   </div>
@@ -168,15 +169,15 @@
     right: 0;
     bottom: 0;
     background: #efefef;
-    z-index: 99;
+    z-index: 100;
     overflow-y: auto;
   }
 
   #appbar {
     width: 100;
     height: 160px;
-    background-color: var(--mdc-theme-primary);
-    background-image: url('../assets/bg3.png');
+    margin: 0;
+    background: linear-gradient(#e06926,#ea3624);
   }
 
   #map {

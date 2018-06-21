@@ -17,6 +17,7 @@ Vue.config.productionTip = false;
 
 const store = new Vuex.Store({
   state: {
+    open: false,
     foodItems: [],
     cart: {},
     user: null,
@@ -25,7 +26,7 @@ const store = new Vuex.Store({
   getters: getters(),
   mutations: mutations(Vue),
   actions: actions(),
-  plugins: [createPersistedState(), createLogger(), plugins().init(window.firebase)]
+  plugins: [plugins().init(window.firebase), createPersistedState(), createLogger()]
 })
 
 /* eslint-disable no-new */
