@@ -121,7 +121,7 @@ import {mapState, mapMutations} from 'vuex'
             });
             return
           }
-          if (response.rows[0].elements[0].distance.value < 5000) {
+          if (response.rows[0].elements[0].distance.value < 10000) {
             this.denied = false
           } else {
             this.map = new window.google.maps.Map(document.getElementById('map'), {

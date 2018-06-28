@@ -17,10 +17,10 @@ export default () => {
       return _total
     },
     delivery() {
-      return 50
+      return 40
     },
     packaging() {
-      return 20
+      return 0
     },
     total(state, getters) {
       return getters.subtotal + getters.delivery + getters.packaging
